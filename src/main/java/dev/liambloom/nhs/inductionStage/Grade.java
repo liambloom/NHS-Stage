@@ -9,7 +9,9 @@ public enum Grade {
             "grade are: sophomore, junior, senior, 10, 11, 12";
 
     public static Grade parse(String s) {
-        Exception cause = null;
+        if (s.isEmpty()) {
+            throw new IllegalArgumentException(String.format(parseError, s));
+        }
 
         try {
             return Grade.valueOf(Character.toUpperCase(s.charAt(0)) + s.toLowerCase().substring(1));

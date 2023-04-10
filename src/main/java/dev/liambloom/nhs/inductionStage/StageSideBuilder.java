@@ -54,24 +54,28 @@ public class StageSideBuilder {
             done = true;
         }
 
-        int i = rightToLeft ? colCount : 0;
-        int j = memberCount % rowCount;
+        int i = rightToLeft ? colCount - 1 : 0;
+        int j = rowCount - memberCount % rowCount;
 
         Iterator<Member> iter = Stream.of(groupOrder)
                 .map(seatingGroups::get)
                 .flatMap(Set::stream)
                 .iterator();
 
+
+
         while (iter.hasNext()) {
+
             stage[i][j++] = iter.next();
-            if (rightToLeft) {
-                i--;
-            }
-            else {
-                i++;
-            }
+            System.out.printf("stage[%d][%d] = %s%n", i, j - 1, stage[i][j - 1]);
             if (j >= rowCount) {
                 j = 0;
+                if (rightToLeft) {
+                    i--;
+                }
+                else {
+                    i++;
+                }
             }
         }
 

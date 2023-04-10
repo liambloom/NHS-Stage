@@ -66,7 +66,7 @@ public class Stage {
     }
 
     public void saveLayout(CSVPrinter writer) throws IOException {
-        int recordLength = stageLeft.length + stageRight.length + 1;
+        int recordLength = Math.max(stageLeft.length, 4) + Math.max(stageRight.length, 4) + 1;
 
         Object[] raised = new Object[recordLength];
         System.arraycopy(leftTable, 0, raised, stageLeft.length - leftTable.length, leftTable.length);
@@ -85,6 +85,8 @@ public class Stage {
             }
             writer.printRecord((Object[]) row);
         }
+
+        writer.close();
     }
 
     public SeatingGroup getSeatingGroup (Member member) {

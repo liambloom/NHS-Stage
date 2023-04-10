@@ -8,11 +8,20 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DataLoader {
-    public static List<Member> loadData(CSVParser parser, ColumnNumbers columnNumbers, Map<Integer, OfficerPosition> incumbent,
-                                    Map<Integer, OfficerPosition> elect, Map<Integer, Award> awards) {
+    public static List<Member> loadData(CSVParser parser, int headerRows, ColumnNumbers columnNumbers,
+                                        Map<Integer, OfficerPosition> incumbent, Map<Integer, OfficerPosition> elect,
+                                        Map<Integer, Award> awards) {
         List<Member> members = new ArrayList<>();
-        int i = 0;
+        boolean[] incumbentOfficers = new boolean[OfficerPosition.values().length];
+        boolean[] officersElect = new boolean[OfficerPosition.values().length];
+        boolean[] awardWinners = new boolean[Award.values().length];
+        int i = -headerRows;
         for (CSVRecord r : parser) {
+            if (i < 0) {
+                i++;
+                continue;
+            }
+
             AtomicBoolean isOfficerElect = new AtomicBoolean(false);
             int finalI = i;
             Optional<OfficerPosition> officerPosition = Optional.ofNullable(incumbent.get(i))
@@ -22,10 +31,33 @@ public class DataLoader {
                         return pos;
                     });
             Optional<Award> award = Optional.ofNullable(awards.get(i));
+
+            officerPosition.ifPresent(pos ->
+                    (isOfficerElect.get() ? officersElect : incumbentOfficers)[pos.ordinal()] = true);
+            award.ifPresent(value -> awardWinners[value.ordinal()] = true);
+
             members.add(new Member(r.get(columnNumbers.firstName()), r.get(columnNumbers.lastName()),
                     Grade.parse(r.get(columnNumbers.grade())), booleanParser(r.get(columnNumbers.isReturning())),
                     officerPosition, isOfficerElect.get(), award));
             i++;
+        }
+
+        for (OfficerPosition position : OfficerPosition.values()) {
+            if (!incumbentOfficers[position.ordinal()]) {
+                members.add(new Member("Incumbent", position.name(), Grade.Senior, false,
+                        Optional.of(position), false, Optional.empty()));
+            }
+            if (!officersElect[position.ordinal()]) {
+                members.add(new Member(position.name(), "Elect", Grade.Junior, false,
+                        Optional.of(position), true, Optional.empty()));
+            }
+        }
+
+        for (Award award : Award.values()) {
+            if (!awardWinners[award.ordinal()]) {
+                members.add(new Member(award.name(), "Award Winner", Grade.Senior, false,
+                        Optional.empty(), false, Optional.empty()));
+            }
         }
 
         return members;
