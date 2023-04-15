@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.Text?>
+<StackPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            prefHeight="400.0" prefWidth="600.0"
+            id="start"
+            styleClass="center">
+    <!--
+            fx:controller="dev.liambloom.nhs.inductionStage.gui."-->
+    <VBox>
+        <Text>Welcome to Stage Builder for NHS (&#169; Liam Bloom 2023)</Text>
+        <Text>To begin, please upload the member list as a CSV file</Text>
+        <Text>You can drag and drop or click anywhere to begin</Text>
+    </VBox>
+
+</StackPane>

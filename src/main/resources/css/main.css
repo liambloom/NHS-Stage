@@ -1,0 +1,11 @@
+#start > * {
+    -fx-alignment: center;
+    -fx-font-family: "Helvetica";
+}
+
+#start Text {
+    -fx-fill: #444;
+}
+
+/*.center
+    -fx-text-alignment: center;*/
