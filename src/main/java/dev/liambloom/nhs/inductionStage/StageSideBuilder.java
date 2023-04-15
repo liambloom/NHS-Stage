@@ -1,8 +1,6 @@
 package dev.liambloom.nhs.inductionStage;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
@@ -11,12 +9,12 @@ public class StageSideBuilder {
     private final int colCount;
     private final int memberCount;
     private final boolean rightToLeft;
-    private final Map<SeatingGroup, Set<Member>> seatingGroups;
+    private final Map<SeatingGroup, ? extends SortedSet<Member>> seatingGroups;
     private final SeatingGroup[] groupOrder;
     private final Member[][] stage;
     private boolean done = false;
 
-    public StageSideBuilder(int rowCount, Map<SeatingGroup, Set<Member>> seatingGroups, SeatingGroup[] groupOrder,
+    public StageSideBuilder(int rowCount, Map<SeatingGroup, ? extends SortedSet<Member>> seatingGroups, SeatingGroup[] groupOrder,
                             boolean rightToLeft) {
         this.rowCount = rowCount;
         this.seatingGroups = seatingGroups;
@@ -54,15 +52,19 @@ public class StageSideBuilder {
             done = true;
         }
 
-        int i = rightToLeft ? colCount - 1 : 0;
-        int j = rowCount - memberCount % rowCount;
+        Stream.Builder<SeatingGroup> iterBuilder = Stream.builder();
 
-        Iterator<Member> iter = Stream.of(groupOrder)
+        for (int i = groupOrder.length - 1; i >= 0; i--) {
+            iterBuilder.add(groupOrder[i]);
+        }
+
+        Iterator<Member> iter = iterBuilder.build()
                 .map(seatingGroups::get)
                 .flatMap(Set::stream)
                 .iterator();
 
-
+        int i = rightToLeft ? colCount - 1 : 0;
+        int j = rowCount - (memberCount - 1) % rowCount - 1;
 
         while (iter.hasNext()) {
 

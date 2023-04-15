@@ -18,8 +18,8 @@ public class Stage {
 
     private final int memberCount;
 
-    private static final SeatingGroup[] stageLeftGroups = { SeatingGroup.NewSophomores, SeatingGroup.NewJuniors,
-            SeatingGroup.NewSeniors, SeatingGroup.OfficersElect };
+    private static final SeatingGroup[] stageLeftGroups = { SeatingGroup.OfficersElect, SeatingGroup.NewSeniors,
+            SeatingGroup.NewJuniors, SeatingGroup.NewSophomores };
     private static final SeatingGroup[] stageRightGroups = { SeatingGroup.AwardWinners, SeatingGroup.ReturningSeniors,
             SeatingGroup.ReturningJuniors };
 
@@ -28,7 +28,7 @@ public class Stage {
         this.rowCount = rowCount;
 
         // Create a map to sets of members, where each set is a seating group
-        Map<SeatingGroup, Set<Member>> seatingGroups = new HashMap<>();
+        Map<SeatingGroup, NavigableSet<Member>> seatingGroups = new HashMap<>();
 
         // Adds the sets to the map
         for (SeatingGroup group : SeatingGroup.values()) {
@@ -40,13 +40,21 @@ public class Stage {
             seatingGroups.get(getSeatingGroup(member)).add(member);
         }
 
+        for (SeatingGroup seatingGroup : SeatingGroup.values()) {
+            System.out.println(seatingGroup);
+            for (Member member : seatingGroups.get(seatingGroup))
+                System.out.printf(" %-20s | %-20s | %-10s | %b | %-13s | %b | %-10s%n", member.firstName(), member.lastName(),
+                        member.grade(), member.isReturning(), member.officerPosition().map(Object::toString).orElse(""), member.isOfficerElect(),
+                        member.award().map(Object::toString).orElse(""));
+        }
+
         StageSideBuilder leftSideBuilder = new StageSideBuilder(rowCount, seatingGroups, stageLeftGroups, false);
         stageLeft = leftSideBuilder.build();
 
         StageSideBuilder rightSideBuilder = new StageSideBuilder(rowCount, seatingGroups, stageRightGroups, true);
         stageRight = rightSideBuilder.build();
 
-        incumbentOfficers = seatingGroups.get(SeatingGroup.IncumbentOfficers).toArray(new Member[0]);
+        incumbentOfficers = seatingGroups.get(SeatingGroup.IncumbentOfficers).descendingSet().toArray(new Member[0]);
     }
 
     public List<Member> getLineup() {
@@ -97,6 +105,9 @@ public class Stage {
             else {
                 return SeatingGroup.IncumbentOfficers;
             }
+        }
+        else if (member.award().isPresent()) {
+            return SeatingGroup.AwardWinners;
         }
         else if (member.isReturning()) {
             if (member.grade().equals(Grade.Senior)) {
