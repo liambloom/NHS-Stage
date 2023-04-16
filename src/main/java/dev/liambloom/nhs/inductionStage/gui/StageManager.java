@@ -16,16 +16,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class StageManager extends Application {
-    private final Stage stage;
+    private Stage stage;
     private Scene startScene;
     private Scene helpScene;
     private Scene dataEntry;
     private Scene resultScene;
-
-
-    private StageManager(Stage stage) {
-        this.stage = stage;
-    }
 
     public Stage getStage() {
         return this.stage;
@@ -33,6 +28,8 @@ public class StageManager extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        this.stage = stage;
+
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
             if (Platform.isFxApplicationThread()) {
                 while (throwable.getCause() != null && (throwable.getStackTrace()[0].getModuleName().startsWith("javafx")
