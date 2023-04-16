@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            prefHeight="400.0" prefWidth="600.0"
+            fx:controller="dev.liambloom.nhs.inductionStage.gui.DataEntry"
+            id="root">
+    <center>
+        <ScrollPane BorderPane.alignment="CENTER" id="MainContent">
+            <TableView fx:id="dataTable" />
+        </ScrollPane>
+    </center>
+    <bottom>
+        <AnchorPane minHeight="70" id="bottom-bar">
+            <HBox AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" id="instructions-container" fillHeight="false">
+                <TextFlow id="instructions">
+                    <Text>Foo?,</Text>
+                </TextFlow>
+            </HBox>
+            <HBox AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" id="instructions-container" fillHeight="false">
+                <Button text="Prev" onAction="#prev" />
+                <Button text="Next" onAction="#next" />
+            </HBox>
+        </AnchorPane>
+    </bottom>
+    <!--<HBox BorderPane.alignment="BOTTOM_LEFT" id="Buttons">
+        <Text>Bar</Text>
+    </HBox>-->
+</BorderPane>

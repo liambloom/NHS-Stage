@@ -1,0 +1,15 @@
+.root {
+    -fx-background-color: #eee;
+    -fx-font-family: "Helvetica";
+}
+
+.root > VBox {
+    -fx-alignment: center;
+}
+
+.root Text {
+    -fx-fill: #333;
+}
+
+/*.center
+    -fx-text-alignment: center;*/
