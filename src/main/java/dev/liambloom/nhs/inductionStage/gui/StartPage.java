@@ -15,27 +15,17 @@ import org.apache.commons.csv.CSVParser;
 import java.io.*;
 import java.nio.charset.Charset;
 
-public class StartPage {
+public class StartPage extends StageManager.Managed {
     @FXML
     public void openFileChooser(MouseEvent event) throws IOException {
-        Scene scene = ((Node) event.getSource()).getScene();
-        Stage stage = (Stage) scene.getWindow();
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV File", "*.csv"));
-        File memberList = fileChooser.showOpenDialog(stage);
+        File memberList = fileChooser.showOpenDialog(getStageManager().getStage());
         if (memberList != null) {
             CSVParser csv = CSVParser.parse(memberList, Charset.defaultCharset(), CSVFormat.DEFAULT);
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/DataEntry.fxml"));
-            BorderPane dataContent = loader.load();
-            DataEntry controller = loader.getController();
-            controller.initData(csv);
-            controller.setBeforeFirst(() -> stage.setScene(scene));
-            Scene dataScene = new Scene(dataContent);
-            dataScene.getStylesheets().add(getClass().getResource("/css/DataEntry.css").toExternalForm());
-
-            stage.setScene(dataScene);
+            getStageManager().toDataEntry(csv);
         }
     }
 }
