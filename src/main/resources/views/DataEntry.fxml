@@ -10,20 +10,18 @@
 <?import javafx.scene.text.TextFlow?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            prefHeight="400.0" prefWidth="600.0"
             fx:controller="dev.liambloom.nhs.inductionStage.gui.DataEntry"
             id="root">
     <center>
-        <ScrollPane BorderPane.alignment="CENTER" id="MainContent">
-            <TableView fx:id="dataTable" />
-        </ScrollPane>
+
+        <TableView fx:id="dataTable" styleClass="noheader" />
+<!--        <ScrollPane BorderPane.alignment="CENTER" id="MainContent">-->
+<!--        </ScrollPane>-->
     </center>
     <bottom>
         <AnchorPane minHeight="70" id="bottom-bar">
             <HBox AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" id="instructions-container" fillHeight="false">
-                <TextFlow id="instructions">
-                    <Text>Foo?,</Text>
-                </TextFlow>
+                <Text fx:id="instructions" />
             </HBox>
             <HBox AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" id="instructions-container" fillHeight="false">
                 <Button text="Prev" onAction="#prev" />

@@ -4,15 +4,20 @@ import dev.liambloom.nhs.inductionStage.Member;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.List;
 
 public class StageManager extends Application {
@@ -31,6 +36,8 @@ public class StageManager extends Application {
         this.stage = stage;
 
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            throwable.printStackTrace();
+
             if (Platform.isFxApplicationThread()) {
                 while (throwable.getCause() != null && (throwable.getStackTrace()[0].getModuleName().startsWith("javafx")
                         || throwable instanceof InvocationTargetException)) {
@@ -57,15 +64,26 @@ public class StageManager extends Application {
                 }
             }
             else {
-                throwable.printStackTrace();
                 System.exit(1);
             }
         });
 
         toStart();
+        //toDataEntry(CSVParser.parse(Path.of("members.csv"), Charset.defaultCharset(), CSVFormat.DEFAULT));
 
         stage.setTitle("Stage Builder for NHS");
+        stage.setMaximized(true);
         stage.show();
+    }
+
+    private Scene newScene(Parent content) {
+        Scene prev = stage.getScene();
+        if (prev == null) {
+            return new Scene(content);
+        }
+        else {
+            return new Scene(content, prev.getWidth(), prev.getHeight());
+        }
     }
 
     public void toStart() throws IOException {
@@ -73,7 +91,7 @@ public class StageManager extends Application {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/Start.fxml"));
 
             Pane startContent = loader.load();
-            startScene = new Scene(startContent);
+            startScene = newScene(startContent);
             startScene.getStylesheets().add(getClass().getResource("/css/Start.css").toExternalForm());
 
             Managed controller = loader.getController();
@@ -85,16 +103,20 @@ public class StageManager extends Application {
         stage.setScene(startScene);
     }
 
-    public void toDataEntry(CSVParser csv) throws IOException {
+    public void toDataEntry(List<CSVRecord> csv) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/DataEntry.fxml"));
+
         BorderPane dataContent = loader.load();
+        dataEntry = newScene(dataContent);
+        dataEntry.getStylesheets().add(getClass().getResource("/css/DataEntry.css").toExternalForm());
+
         DataEntry controller = loader.getController();
         controller.initData(csv);
         ((Managed) controller).stageManager = this;
-        Scene dataScene = new Scene(dataContent);
-        dataScene.getStylesheets().add(getClass().getResource("/css/DataEntry.css").toExternalForm());
 
-        stage.setScene(dataScene);
+        resultScene = null;
+
+        stage.setScene(dataEntry);
     }
 
     public void toResults(List<Member> members) {

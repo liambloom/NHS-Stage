@@ -9,7 +9,6 @@
 <?import javafx.scene.text.Text?>
 <StackPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            prefHeight="400.0" prefWidth="600.0"
             fx:controller="dev.liambloom.nhs.inductionStage.gui.StartPage"
             onMouseClicked="#openFileChooser">
     <!--

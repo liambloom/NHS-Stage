@@ -12,9 +12,8 @@ import java.nio.file.Path;
 import java.util.*;
 
 public class Main {
-    /*public static void main(String[] args) throws IOException {
-        Application.launch(dev.liambloom.nhs.inductionStage.gui.StageManager.class, args);
-        /*List<Member> members = DataLoader.loadData(CSVParser.parse(Path.of("members.csv"), Charset.defaultCharset(), CSVFormat.DEFAULT), 3,
+    public static void main(String[] args) throws IOException {
+        List<Member> members = DataLoader.loadData(CSVParser.parse(Path.of("members.csv"), Charset.defaultCharset(), CSVFormat.DEFAULT), 3,
                 new ColumnNumbers(0, 1, 3, 5),
                 Map.of(
                         6, OfficerPosition.Secretary,
@@ -42,5 +41,5 @@ public class Main {
             Files.createFile(out);
         }
         stage.saveLayout(new CSVPrinter(Files.newBufferedWriter(out), CSVFormat.DEFAULT));
-    }*/
+    }
 }
