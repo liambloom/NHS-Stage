@@ -2,24 +2,23 @@ package dev.liambloom.nhs.inductionStage.gui;
 
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
 import dev.liambloom.nhs.inductionStage.gui.DataSelector.SelectionType;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DataEntry extends StageManager.Managed {
     @FXML
@@ -32,7 +31,7 @@ public class DataEntry extends StageManager.Managed {
     private IntegerProperty i = new SimpleIntegerProperty(0);
 
     @FXML
-    private ObservableList<DataSelector> selectors = FXCollections.observableArrayList(
+    private final ObservableList<DataSelector> selectors = FXCollections.observableArrayList(
             new DataSelector(SelectionType.Rows, true, "member data"),
             new DataSelector(SelectionType.Column, "members' first names"),
             new DataSelector(SelectionType.Column, "members' last names"),
@@ -63,7 +62,91 @@ public class DataEntry extends StageManager.Managed {
                 return selectors.get(i.get()).getInstruction();
             }
         });
+
+        i.addListener((observable, oldValue, newValue) ->
+                setSelectionType(selectors.get(newValue.intValue()).getSelectionType()));
+        // TODO: Make this only apply for column selection
+//        dataTable.addEventFilter(MouseEvent.MOUSE_PRESSED, (event) -> {
+//            if(event.isShortcutDown() || event.isShiftDown())
+//                event.consume();
+//        });
+
+        setSelectionType(selectors.get(i.get()).getSelectionType());
     }
+
+    private AtomicBoolean columnListenerIsSet = new AtomicBoolean(false);
+    private AtomicBoolean rowsHandlerIsSet = new AtomicBoolean(false);
+
+    private void setSelectionType(DataSelector.SelectionType selector) {
+        switch (selector) {
+            case Row -> {
+                dataTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+                dataTable.getSelectionModel().setCellSelectionEnabled(false);
+                dataTable.getFocusModel().focusedCellProperty().removeListener(columnSelector);
+                dataTable.removeEventFilter(MouseEvent.MOUSE_PRESSED, rowsSelector);
+                columnListenerIsSet.setRelease(false);
+                rowsHandlerIsSet.setRelease(false);
+            }
+            case Rows -> {
+                dataTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+                dataTable.getSelectionModel().setCellSelectionEnabled(false);
+                dataTable.getFocusModel().focusedCellProperty().removeListener(columnSelector);
+                columnListenerIsSet.setRelease(false);
+
+                if (!rowsHandlerIsSet.getAndSet(true)) {
+//                    dataTable.addEventFilter(MouseEvent.MOUSE_PRESSED, rowsSelector);
+                }
+            }
+            case Column -> {
+                dataTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+                dataTable.getSelectionModel().setCellSelectionEnabled(true);
+                dataTable.removeEventFilter(MouseEvent.MOUSE_PRESSED, rowsSelector);
+                rowsHandlerIsSet.setRelease(false);
+                if (!columnListenerIsSet.getAndSet(true)) {
+                    dataTable.getFocusModel().focusedCellProperty().addListener(columnSelector);
+                }
+            }
+        }
+    }
+
+    private ChangeListener<TablePosition> columnSelector = (obs, oldVal, newVal) -> {
+        System.out.println("column selected @ " + System.nanoTime());
+//        if(newVal.getTableColumn() != null){
+            dataTable.getSelectionModel()
+                    .selectRange(0, newVal.getTableColumn(), dataTable.getItems().size(), newVal.getTableColumn());
+//            System.out.println("Selected TableColumn: "+ newVal.getTableColumn().getText());
+//            System.out.println("Selected column index: "+ newVal.getColumn());
+//        }
+    };
+
+    private EventHandler<MouseEvent> rowsSelector = evt -> {
+        // https://stackoverflow.com/a/39366485/11326662
+        Node node = evt.getPickResult().getIntersectedNode();
+
+        while (node != null && node != dataTable && !(node instanceof TableRow)) {
+            node = node.getParent();
+        }
+
+        if (node instanceof TableRow) {
+            evt.consume();
+
+            TableRow<CSVRecord> row = (TableRow<CSVRecord>) node;
+            TableView<CSVRecord> tv = row.getTableView();
+
+            // focus the tableview
+            tv.requestFocus();
+
+            if (!row.isEmpty()) {
+                // handle selection for non-empty nodes
+                int index = row.getIndex();
+                if (row.isSelected()) {
+                    tv.getSelectionModel().clearSelection(index);
+                } else {
+                    tv.getSelectionModel().select(index);
+                }
+            }
+        }
+    };
 
     protected void initData(List<CSVRecord> records) {
         ObservableList<CSVRecord> observableRecords = FXCollections.observableList(records);
