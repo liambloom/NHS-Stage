@@ -61,9 +61,6 @@ public class DataEntry extends StageManager.Managed {
     public void initialize() {
         instructions.textProperty().bind(Bindings.selectString(currentSelector, "getInstruction"));
 
-        i.addListener((observable, oldValue, newValue) ->
-                setSelectionType(selectors.get(newValue.intValue()).getSelectionType()));
-
         ObjectBinding<SelectionType> selectionType = Bindings.select(currentSelector, "getSelectionType");
 
         dataTable.getSelectionModel().selectionModeProperty().bind(
@@ -83,64 +80,34 @@ public class DataEntry extends StageManager.Managed {
 //        });
 
         dataTable.addEventFilter(MouseEvent.MOUSE_PRESSED, (event) -> {
-//            if(currentSelector.get().getSelectionType().equals(SelectionType.Column)
-//                    && (event.isShortcutDown() || event.isShiftDown())) {
-//                event.consume();
-//            }
+            if(currentSelector.get().getSelectionType().equals(SelectionType.Column)
+                    && (event.isShortcutDown() || event.isShiftDown())) {
+                event.consume();
+            }
         });
 
-        setSelectionType(selectors.get(i.get()).getSelectionType());
-    }
-
-    private AtomicBoolean columnListenerIsSet = new AtomicBoolean(false);
-    private AtomicBoolean rowsHandlerIsSet = new AtomicBoolean(false);
-
-    private void setSelectionType(DataSelector.SelectionType selector) {
-        switch (selector) {
-            case Row -> {
-//                dataTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-//                dataTable.getSelectionModel().setCellSelectionEnabled(false);
-                dataTable.getFocusModel().focusedCellProperty().removeListener(columnSelector);
-                dataTable.removeEventFilter(MouseEvent.MOUSE_PRESSED, rowsSelector);
-                columnListenerIsSet.setRelease(false);
-                rowsHandlerIsSet.setRelease(false);
-            }
-            case Rows -> {
-//                dataTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-//                dataTable.getSelectionModel().setCellSelectionEnabled(false);
-                dataTable.getFocusModel().focusedCellProperty().removeListener(columnSelector);
-                columnListenerIsSet.setRelease(false);
-
-                if (!rowsHandlerIsSet.getAndSet(true)) {
-//                    dataTable.addEventFilter(MouseEvent.MOUSE_PRESSED, rowsSelector);
-                }
-            }
-            case Column -> {
-//                dataTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-//                dataTable.getSelectionModel().setCellSelectionEnabled(true);
-                dataTable.removeEventFilter(MouseEvent.MOUSE_PRESSED, rowsSelector);
-                rowsHandlerIsSet.setRelease(false);
-                if (!columnListenerIsSet.getAndSet(true)) {
-                    dataTable.getFocusModel().focusedCellProperty().addListener(columnSelector);
-                }
-            }
-        }
+        dataTable.getFocusModel().focusedCellProperty().addListener(columnSelector);
+        dataTable.addEventFilter(MouseEvent.MOUSE_PRESSED, rowsSelector);
     }
 
     private ChangeListener<TablePosition> columnSelector = (obs, oldVal, newVal) -> {
-        System.out.println("column " + newVal + " @ " + System.nanoTime());
+        if (!currentSelector.get().getSelectionType().equals(SelectionType.Column)) {
+            return;
+        }
+
         if(newVal.getTableColumn() != null){
-        Platform.runLater(() -> {
-            System.out.println("later, " + newVal);
-//        dataTable.getSelectionModel().clearSelection();
+            dataTable.getSelectionModel().clearSelection();
             dataTable.getSelectionModel()
-                    .selectRange(0, newVal.getTableColumn(), dataTable.getItems().size(), newVal.getTableColumn());});
-            System.out.println("Selected TableColumn: "+ newVal.getTableColumn().getText());
-//            System.out.println("Selected column index: "+ newVal.getColumn());
+                    .selectRange(0, newVal.getTableColumn(), dataTable.getItems().size(), newVal.getTableColumn());//});
         }
     };
 
+    // TODO: Check if SHIFT is pressed
     private EventHandler<MouseEvent> rowsSelector = evt -> {
+        if (!currentSelector.get().getSelectionType().equals(SelectionType.Rows)) {
+            return;
+        }
+
         // https://stackoverflow.com/a/39366485/11326662
         Node node = evt.getPickResult().getIntersectedNode();
 
