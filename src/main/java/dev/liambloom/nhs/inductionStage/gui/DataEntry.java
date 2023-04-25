@@ -1,7 +1,12 @@
 package dev.liambloom.nhs.inductionStage.gui;
 
+import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.binding.StringBinding;
+import javafx.beans.binding.When;
 import javafx.beans.property.*;
+import javafx.beans.property.adapter.JavaBeanStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -51,25 +56,38 @@ public class DataEntry extends StageManager.Managed {
             new DataSelector(SelectionType.Row, "the Character award winner")
     );
 
-    public void initialize() {
-        instructions.textProperty().bind(new StringBinding() {
-            {
-                bind(i, selectors);
-            }
+    private final ObjectBinding<DataSelector> currentSelector = Bindings.valueAt(selectors, i);
 
-            @Override
-            protected String computeValue() {
-                return selectors.get(i.get()).getInstruction();
-            }
-        });
+    public void initialize() {
+        instructions.textProperty().bind(Bindings.selectString(currentSelector, "getInstruction"));
 
         i.addListener((observable, oldValue, newValue) ->
                 setSelectionType(selectors.get(newValue.intValue()).getSelectionType()));
-        // TODO: Make this only apply for column selection
-//        dataTable.addEventFilter(MouseEvent.MOUSE_PRESSED, (event) -> {
-//            if(event.isShortcutDown() || event.isShiftDown())
-//                event.consume();
+
+        ObjectBinding<SelectionType> selectionType = Bindings.select(currentSelector, "getSelectionType");
+
+        dataTable.getSelectionModel().selectionModeProperty().bind(
+                new When(selectionType.isEqualTo(DataSelector.SelectionType.Row))
+                        .then(SelectionMode.SINGLE)
+                        .otherwise(SelectionMode.MULTIPLE));
+
+        dataTable.getSelectionModel().cellSelectionEnabledProperty().bind(selectionType.isEqualTo(SelectionType.Column));
+
+//        dataTable.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+//            Node node = event.getPickResult().getIntersectedNode();
+//
+//            while (node != null /*&& /* && node != dataTable && !(node instanceof TableRow)*/) {
+//                System.out.println("node: " + node);
+//                node = node.getParent();
+//            }
 //        });
+
+        dataTable.addEventFilter(MouseEvent.MOUSE_PRESSED, (event) -> {
+//            if(currentSelector.get().getSelectionType().equals(SelectionType.Column)
+//                    && (event.isShortcutDown() || event.isShiftDown())) {
+//                event.consume();
+//            }
+        });
 
         setSelectionType(selectors.get(i.get()).getSelectionType());
     }
@@ -80,16 +98,16 @@ public class DataEntry extends StageManager.Managed {
     private void setSelectionType(DataSelector.SelectionType selector) {
         switch (selector) {
             case Row -> {
-                dataTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-                dataTable.getSelectionModel().setCellSelectionEnabled(false);
+//                dataTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+//                dataTable.getSelectionModel().setCellSelectionEnabled(false);
                 dataTable.getFocusModel().focusedCellProperty().removeListener(columnSelector);
                 dataTable.removeEventFilter(MouseEvent.MOUSE_PRESSED, rowsSelector);
                 columnListenerIsSet.setRelease(false);
                 rowsHandlerIsSet.setRelease(false);
             }
             case Rows -> {
-                dataTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-                dataTable.getSelectionModel().setCellSelectionEnabled(false);
+//                dataTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+//                dataTable.getSelectionModel().setCellSelectionEnabled(false);
                 dataTable.getFocusModel().focusedCellProperty().removeListener(columnSelector);
                 columnListenerIsSet.setRelease(false);
 
@@ -98,8 +116,8 @@ public class DataEntry extends StageManager.Managed {
                 }
             }
             case Column -> {
-                dataTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-                dataTable.getSelectionModel().setCellSelectionEnabled(true);
+//                dataTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+//                dataTable.getSelectionModel().setCellSelectionEnabled(true);
                 dataTable.removeEventFilter(MouseEvent.MOUSE_PRESSED, rowsSelector);
                 rowsHandlerIsSet.setRelease(false);
                 if (!columnListenerIsSet.getAndSet(true)) {
@@ -110,13 +128,16 @@ public class DataEntry extends StageManager.Managed {
     }
 
     private ChangeListener<TablePosition> columnSelector = (obs, oldVal, newVal) -> {
-        System.out.println("column selected @ " + System.nanoTime());
-//        if(newVal.getTableColumn() != null){
+        System.out.println("column " + newVal + " @ " + System.nanoTime());
+        if(newVal.getTableColumn() != null){
+        Platform.runLater(() -> {
+            System.out.println("later, " + newVal);
+//        dataTable.getSelectionModel().clearSelection();
             dataTable.getSelectionModel()
-                    .selectRange(0, newVal.getTableColumn(), dataTable.getItems().size(), newVal.getTableColumn());
-//            System.out.println("Selected TableColumn: "+ newVal.getTableColumn().getText());
+                    .selectRange(0, newVal.getTableColumn(), dataTable.getItems().size(), newVal.getTableColumn());});
+            System.out.println("Selected TableColumn: "+ newVal.getTableColumn().getText());
 //            System.out.println("Selected column index: "+ newVal.getColumn());
-//        }
+        }
     };
 
     private EventHandler<MouseEvent> rowsSelector = evt -> {

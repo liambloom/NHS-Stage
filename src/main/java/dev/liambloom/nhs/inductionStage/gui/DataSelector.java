@@ -1,8 +1,6 @@
 package dev.liambloom.nhs.inductionStage.gui;
 
-import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.fxml.FXML;
 
 public class DataSelector {
@@ -12,7 +10,8 @@ public class DataSelector {
         Column,
     }
 
-    private final SelectionType selectionType;
+    @FXML
+    private final ReadOnlyObjectProperty<SelectionType> selectionType;
 
     @FXML
     private final ReadOnlyStringProperty instruction;
@@ -22,7 +21,7 @@ public class DataSelector {
     }
 
     public DataSelector(SelectionType selectionType, boolean negative, String description) {
-        this.selectionType = selectionType;
+        this.selectionType = new SimpleObjectProperty<>(selectionType);
 
         StringBuilder builder = new StringBuilder();
         builder.append("Please select the ")
@@ -47,8 +46,13 @@ public class DataSelector {
     }
 
     public SelectionType getSelectionType() {
+        return selectionType.get();
+    }
+
+    public ReadOnlyObjectProperty<SelectionType> getSelectionTypeProperty() {
         return selectionType;
     }
+
 
     public String getInstruction() {
         return instruction.get();
