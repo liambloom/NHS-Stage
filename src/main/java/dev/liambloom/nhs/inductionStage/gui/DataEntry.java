@@ -1,17 +1,14 @@
 package dev.liambloom.nhs.inductionStage.gui;
 
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.binding.StringBinding;
 import javafx.beans.binding.When;
 import javafx.beans.property.*;
-import javafx.beans.property.adapter.JavaBeanStringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -30,6 +27,12 @@ public class DataEntry extends StageManager.Managed {
     private TableView<CSVRecord> dataTable;
 
     @FXML
+    private Button next;
+
+    @FXML
+    private Button update;
+
+    @FXML
     private Text instructions;
 
     @FXML
@@ -37,7 +40,7 @@ public class DataEntry extends StageManager.Managed {
 
     @FXML
     private final ObservableList<DataSelector> selectors = FXCollections.observableArrayList(
-            new DataSelector(SelectionType.Rows, true, "member data"),
+            new DataSelector(SelectionType.TopRows, "headers"),
             new DataSelector(SelectionType.Column, "members' first names"),
             new DataSelector(SelectionType.Column, "members' last names"),
             new DataSelector(SelectionType.Column, "members' year/grade (as a number OR a word)"),
@@ -58,8 +61,12 @@ public class DataEntry extends StageManager.Managed {
 
     private final ObjectBinding<DataSelector> currentSelector = Bindings.valueAt(selectors, i);
 
+    private boolean selectionUpdateFreeze = false;
+
+    private boolean columnFocusFreezer = false;
+
     public void initialize() {
-        instructions.textProperty().bind(Bindings.selectString(currentSelector, "getInstruction"));
+        instructions.textProperty().bind(Bindings.select(currentSelector, "getInstruction").asString());
 
         ObjectBinding<SelectionType> selectionType = Bindings.select(currentSelector, "getSelectionType");
 
@@ -70,15 +77,6 @@ public class DataEntry extends StageManager.Managed {
 
         dataTable.getSelectionModel().cellSelectionEnabledProperty().bind(selectionType.isEqualTo(SelectionType.Column));
 
-//        dataTable.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-//            Node node = event.getPickResult().getIntersectedNode();
-//
-//            while (node != null /*&& /* && node != dataTable && !(node instanceof TableRow)*/) {
-//                System.out.println("node: " + node);
-//                node = node.getParent();
-//            }
-//        });
-
         dataTable.addEventFilter(MouseEvent.MOUSE_PRESSED, (event) -> {
             if(currentSelector.get().getSelectionType().equals(SelectionType.Column)
                     && (event.isShortcutDown() || event.isShiftDown())) {
@@ -86,55 +84,102 @@ public class DataEntry extends StageManager.Managed {
             }
         });
 
-        dataTable.getFocusModel().focusedCellProperty().addListener(columnSelector);
-        dataTable.addEventFilter(MouseEvent.MOUSE_PRESSED, rowsSelector);
+        // Column focus
+        dataTable.getFocusModel().focusedCellProperty().addListener((obs, oldVal, newVal) -> {
+            if (!currentSelector.get().getSelectionType().equals(SelectionType.Column) || columnFocusFreezer) {
+                return;
+            }
+
+            if (newVal.getTableColumn() != null){
+                columnFocusFreezer = true;
+                selectCol(newVal.getColumn());
+                columnFocusFreezer = false;
+            }
+        });
+
+        // TopRows focus
+        dataTable.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+            if (!currentSelector.get().getSelectionType().equals(SelectionType.TopRows)) {
+                return;
+            }
+
+            // https://stackoverflow.com/a/39366485/11326662
+            Node node = event.getPickResult().getIntersectedNode();
+
+            while (node != null && node != dataTable && !(node instanceof TableRow)) {
+                node = node.getParent();
+            }
+
+            if (node instanceof TableRow) {
+                event.consume();
+
+                TableRow<CSVRecord> row = (TableRow<CSVRecord>) node;
+                TableView<CSVRecord> table = row.getTableView();
+
+                // focus the tableview
+                table.requestFocus();
+
+                table.getSelectionModel().clearSelection();
+                table.getSelectionModel().selectRange(0, row.getIndex() + 1);
+            }
+        });
+
+        dataTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (selectionUpdateFreeze) {
+                return;
+            }
+
+            ObservableList<TablePosition> selectedCells = dataTable.getSelectionModel().getSelectedCells();
+
+            if (selectedCells.isEmpty()) {
+                return;
+            }
+
+            int selection = switch (currentSelector.get().getSelectionType()) {
+                case TopRows -> selectedCells.stream().map(TablePosition::getRow).sorted().skip(selectedCells.size() - 1).findFirst().orElseThrow();
+                case Row -> selectedCells.get(0).getRow();
+                case Column -> selectedCells.get(0).getColumn();
+            };
+
+            currentSelector.get().setSelection(selection);
+        });
+
+        next.disableProperty().bind(Bindings.selectBoolean(currentSelector, "getRequired")
+                .and(Bindings.select(currentSelector, "selection").isNull()));
+        next.textProperty().bind(new When(Bindings.selectBoolean(currentSelector, "getRequired").not()
+                .and(Bindings.select(currentSelector, "selection").isNull()))
+                .then("Skip")
+                .otherwise("Next"));
     }
 
-    private ChangeListener<TablePosition> columnSelector = (obs, oldVal, newVal) -> {
-        if (!currentSelector.get().getSelectionType().equals(SelectionType.Column)) {
+
+    private void selectCol(int i) {
+        TableColumn<CSVRecord, ?> col = dataTable.getColumns().get(i);
+        dataTable.getSelectionModel().clearSelection();
+        dataTable.getSelectionModel().selectRange(0, col, dataTable.getItems().size() - 1, col);
+    }
+
+    private void iChanged() {
+        DataSelector selector = currentSelector.get();
+        if (selector.getSelection() == null)
             return;
-        }
 
-        if(newVal.getTableColumn() != null){
-            dataTable.getSelectionModel().clearSelection();
-            dataTable.getSelectionModel()
-                    .selectRange(0, newVal.getTableColumn(), dataTable.getItems().size(), newVal.getTableColumn());//});
-        }
-    };
+        selectionUpdateFreeze = true;
 
-    // TODO: Check if SHIFT is pressed
-    private EventHandler<MouseEvent> rowsSelector = evt -> {
-        if (!currentSelector.get().getSelectionType().equals(SelectionType.Rows)) {
-            return;
-        }
-
-        // https://stackoverflow.com/a/39366485/11326662
-        Node node = evt.getPickResult().getIntersectedNode();
-
-        while (node != null && node != dataTable && !(node instanceof TableRow)) {
-            node = node.getParent();
-        }
-
-        if (node instanceof TableRow) {
-            evt.consume();
-
-            TableRow<CSVRecord> row = (TableRow<CSVRecord>) node;
-            TableView<CSVRecord> tv = row.getTableView();
-
-            // focus the tableview
-            tv.requestFocus();
-
-            if (!row.isEmpty()) {
-                // handle selection for non-empty nodes
-                int index = row.getIndex();
-                if (row.isSelected()) {
-                    tv.getSelectionModel().clearSelection(index);
-                } else {
-                    tv.getSelectionModel().select(index);
-                }
+        switch (selector.getSelectionType()) {
+            case Row -> {
+                dataTable.getSelectionModel().select(selector.getSelection());
+            }
+            case Column -> {
+                selectCol(selector.getSelection());
+            }
+            case TopRows -> {
+                dataTable.getSelectionModel().selectRange(0, selector.getSelection() + 1);
             }
         }
-    };
+
+        selectionUpdateFreeze = false;
+    }
 
     protected void initData(List<CSVRecord> records) {
         ObservableList<CSVRecord> observableRecords = FXCollections.observableList(records);
@@ -155,7 +200,9 @@ public class DataEntry extends StageManager.Managed {
             new Alert(Alert.AlertType.INFORMATION, "I haven't programmed the next part bit yet!").showAndWait();
         }
         else {
+            dataTable.getSelectionModel().clearSelection();
             i.set(i.get() + 1);
+            iChanged();
         }
     }
 
@@ -169,7 +216,9 @@ public class DataEntry extends StageManager.Managed {
             }
         }
         else {
+            dataTable.getSelectionModel().clearSelection();
             i.set(i.get() - 1);
+            iChanged();
         }
     }
 }

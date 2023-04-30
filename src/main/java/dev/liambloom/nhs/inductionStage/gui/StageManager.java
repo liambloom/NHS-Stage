@@ -18,6 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 public class StageManager extends Application {
     // TODO: Make it so there is only one scene, and the root node changes
@@ -47,8 +48,10 @@ public class StageManager extends Application {
 
                 Alert alert = new Alert(Alert.AlertType.ERROR);
 
+                String message = Optional.ofNullable(throwable.getMessage()).orElse(throwable.getClass().getName());
+
                 if (throwable instanceof Exception) {
-                    alert.setHeaderText("Exception: " + throwable.getMessage());
+                    alert.setHeaderText("Exception: " + message);
                     alert.setContentText("You will now be returned to the starting page of this application.");
                     alert.showAndWait();
                     try {
@@ -58,7 +61,7 @@ public class StageManager extends Application {
                     }
                 }
                 else {
-                    alert.setHeaderText("Error: " + throwable.getMessage());
+                    alert.setHeaderText("Error: " + message);
                     alert.setContentText("The application will now close.");
                     alert.showAndWait();
                     System.exit(1);
@@ -69,12 +72,12 @@ public class StageManager extends Application {
             }
         });
 
-        stage.setScene(new Scene(new Pane()));
+        stage.setScene(new Scene(new Pane(), 600, 400));
 //        toStart();
         toDataEntry(CSVParser.parse(Path.of("members.csv"), Charset.defaultCharset(), CSVFormat.DEFAULT).getRecords());
 
         stage.setTitle("Stage Builder for NHS");
-        stage.setMaximized(true);
+//        stage.setMaximized(true);
         stage.show();
     }
 

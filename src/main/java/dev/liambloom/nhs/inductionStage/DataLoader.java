@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DataLoader {
-    public static List<Member> loadData(CSVParser parser, int headerRows, ColumnNumbers columnNumbers,
+    public static List<Member> loadData(Iterable<CSVRecord> records, int headerRows, ColumnNumbers columnNumbers,
                                         Map<Integer, OfficerPosition> incumbent, Map<Integer, OfficerPosition> elect,
                                         Map<Integer, Award> awards) {
         List<Member> members = new ArrayList<>();
@@ -16,7 +16,7 @@ public class DataLoader {
         boolean[] officersElect = new boolean[OfficerPosition.values().length];
         boolean[] awardWinners = new boolean[Award.values().length];
         int i = -headerRows;
-        for (CSVRecord r : parser) {
+        for (CSVRecord r : records) {
             if (i < 0) {
                 i++;
                 continue;
