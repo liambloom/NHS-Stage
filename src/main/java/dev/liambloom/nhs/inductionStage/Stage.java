@@ -40,14 +40,6 @@ public class Stage {
             seatingGroups.get(getSeatingGroup(member)).add(member);
         }
 
-        for (SeatingGroup seatingGroup : SeatingGroup.values()) {
-            System.out.println(seatingGroup);
-            for (Member member : seatingGroups.get(seatingGroup))
-                System.out.printf(" %-20s | %-20s | %-10s | %b | %-13s | %b | %-10s%n", member.firstName(), member.lastName(),
-                        member.grade(), member.isReturning(), member.officerPosition().map(Object::toString).orElse(""), member.isOfficerElect(),
-                        member.award().map(Object::toString).orElse(""));
-        }
-
         StageSideBuilder leftSideBuilder = new StageSideBuilder(rowCount, seatingGroups, stageLeftGroups, false);
         stageLeft = leftSideBuilder.build();
 

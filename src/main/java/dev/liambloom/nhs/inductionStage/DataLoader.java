@@ -53,10 +53,12 @@ public class DataLoader {
             }
         }
 
+        // TODO: This doesn't work
         for (Award award : Award.values()) {
+
             if (!awardWinners[award.ordinal()]) {
                 members.add(new Member(award.name(), "Award Winner", Grade.Senior, false,
-                        Optional.empty(), false, Optional.empty()));
+                        Optional.empty(), false, Optional.of(award)));
             }
         }
 

@@ -25,7 +25,13 @@ public class ResultController extends StageManager.Managed {
     public void download(ActionEvent event) throws IOException {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Save As");
-        Path out = chooser.showSaveDialog(getStageManager().getStage()).toPath();
+        File outFile = chooser.showSaveDialog(getStageManager().getStage());
+
+        if (outFile == null) {
+            return;
+        }
+
+        Path out = outFile.toPath();
 
         if (!Files.exists(out)) {
             Files.createFile(out);
@@ -39,5 +45,9 @@ public class ResultController extends StageManager.Managed {
         String lineup = stage.getLineup().toString();
         content.putString(lineup.substring(1, lineup.length() - 1));
         clipboard.setContent(content);
+    }
+
+    public void reset(ActionEvent event) throws IOException {
+        getStageManager().toStart();
     }
 }

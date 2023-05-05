@@ -34,13 +34,8 @@ public class Main {
                         38, Award.Leadership
                 ));
 
-        for (Member member : members)
-            System.out.printf("%-20s | %-20s | %-10s | %b | %-13s | %b | %-10s%n", member.firstName(), member.lastName(),
-                    member.grade(), member.isReturning(), member.officerPosition().map(Object::toString).orElse(""), member.isOfficerElect(),
-                    member.award().map(Object::toString).orElse(""));
-
         Stage stage = new Stage(members.toArray(new Member[0]), 6);
-        System.out.println(stage.getLineup());
+
         Path out = Path.of("stage.csv");
         if (!Files.exists(out)) {
             Files.createFile(out);

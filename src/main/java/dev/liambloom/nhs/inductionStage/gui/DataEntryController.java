@@ -211,10 +211,6 @@ public class DataEntryController extends StageManager.Managed {
     @FXML
     private void next(ActionEvent event) throws IOException {
         if (i.get() >= selectors.size() - 1) {
-            for (DataSelector selector : selectors) {
-                System.out.println(selector.getSelection());
-            }
-
             Iterator<Integer> iter = selectors.stream().map(DataSelector::getSelection).iterator();
             int headerRows = iter.next() + 1;
             ColumnNumbers colNumbers = new ColumnNumbers(iter.next(), iter.next(), iter.next(), iter.next());
