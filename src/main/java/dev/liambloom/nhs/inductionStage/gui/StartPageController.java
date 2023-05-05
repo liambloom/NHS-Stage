@@ -1,14 +1,9 @@
 package dev.liambloom.nhs.inductionStage.gui;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -18,7 +13,7 @@ import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.List;
 
-public class StartPage extends StageManager.Managed {
+public class StartPageController extends StageManager.Managed {
     @FXML
     public void openFileChooser(MouseEvent event) throws IOException {
 

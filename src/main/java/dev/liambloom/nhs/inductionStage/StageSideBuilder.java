@@ -69,7 +69,6 @@ public class StageSideBuilder {
         while (iter.hasNext()) {
 
             stage[i][j++] = iter.next();
-            System.out.printf("stage[%d][%d] = %s%n", i, j - 1, stage[i][j - 1]);
             if (j >= rowCount) {
                 j = 0;
                 if (rightToLeft) {

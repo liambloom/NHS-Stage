@@ -1,7 +1,6 @@
 package dev.liambloom.nhs.inductionStage.gui;
 
-import javafx.application.Application;
-import javafx.application.Platform;
+import dev.liambloom.nhs.inductionStage.*;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.binding.When;
@@ -19,18 +18,19 @@ import org.apache.commons.csv.CSVRecord;
 import dev.liambloom.nhs.inductionStage.gui.DataSelector.SelectionType;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Map;
 
-public class DataEntry extends StageManager.Managed {
+public class DataEntryController extends StageManager.Managed {
     @FXML
     private TableView<CSVRecord> dataTable;
 
-    @FXML
-    private Button next;
+    private List<CSVRecord> records;
 
     @FXML
-    private Button update;
+    private Button next;
 
     @FXML
     private Text instructions;
@@ -152,6 +152,20 @@ public class DataEntry extends StageManager.Managed {
                 .otherwise("Next"));
     }
 
+    protected void initData(List<CSVRecord> records) {
+        this.records = records;
+        ObservableList<CSVRecord> observableRecords = FXCollections.observableList(records);
+        dataTable.setItems(observableRecords);
+
+        int size = records.get(0).size();
+        for (int i = 0; i < size; i++) {
+            final int finalI = i;
+            TableColumn<CSVRecord, String> column = new TableColumn<>();
+            column.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().get(finalI)));
+            dataTable.getColumns().add(column);
+        }
+    }
+
 
     private void selectCol(int i) {
         TableColumn<CSVRecord, ?> col = dataTable.getColumns().get(i);
@@ -181,23 +195,36 @@ public class DataEntry extends StageManager.Managed {
         selectionUpdateFreeze = false;
     }
 
-    protected void initData(List<CSVRecord> records) {
-        ObservableList<CSVRecord> observableRecords = FXCollections.observableList(records);
-        dataTable.setItems(observableRecords);
+    private <T> Map<Integer, T> mapSetup(Iterator<Integer> iter, T[] values, int d) {
+        Map<Integer, T> map = new HashMap<>();
 
-        int size = records.get(0).size();
-        for (int i = 0; i < size; i++) {
-            final int finalI = i;
-            TableColumn<CSVRecord, String> column = new TableColumn<>();
-            column.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().get(finalI)));
-            dataTable.getColumns().add(column);
+        for (T t : values) {
+            Integer n = iter.next();
+            if (n != null) {
+                map.put(n + d, t);
+            }
         }
+
+        return map;
     }
 
     @FXML
-    private void next(ActionEvent event) {
+    private void next(ActionEvent event) throws IOException {
         if (i.get() >= selectors.size() - 1) {
-            new Alert(Alert.AlertType.INFORMATION, "I haven't programmed the next part bit yet!").showAndWait();
+            for (DataSelector selector : selectors) {
+                System.out.println(selector.getSelection());
+            }
+
+            Iterator<Integer> iter = selectors.stream().map(DataSelector::getSelection).iterator();
+            int headerRows = iter.next() + 1;
+            ColumnNumbers colNumbers = new ColumnNumbers(iter.next(), iter.next(), iter.next(), iter.next());
+
+            Map<Integer, OfficerPosition> incumbents = mapSetup(iter, OfficerPosition.values(), -headerRows);
+            Map<Integer, OfficerPosition> elect = mapSetup(iter, OfficerPosition.values(), -headerRows);
+            Map<Integer, Award> awards = mapSetup(iter, Award.values(), -headerRows);
+
+            List<Member> members = DataLoader.loadData(records, headerRows, colNumbers, incumbents, elect, awards);
+            getStageManager().toResults(members);
         }
         else {
             dataTable.getSelectionModel().clearSelection();
@@ -222,3 +249,4 @@ public class DataEntry extends StageManager.Managed {
         }
     }
 }
+

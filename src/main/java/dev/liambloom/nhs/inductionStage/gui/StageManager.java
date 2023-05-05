@@ -116,18 +116,29 @@ public class StageManager extends Application {
 //        dataEntry = newScene(dataContent);
         dataEntry.getStylesheets().add(getClass().getResource("/css/DataEntry.css").toExternalForm());
 
-        DataEntry controller = loader.getController();
+        DataEntryController controller = loader.getController();
         controller.initData(csv);
         ((Managed) controller).stageManager = this;
 
-        resultContent = null;
+        toLastDataEntry();
+    }
 
-//        stage.setScene(dataEntry);
+    public void toLastDataEntry() {
+        resultContent = null;
         stage.getScene().setRoot(dataEntry);
     }
 
-    public void toResults(List<Member> members) {
+    public void toResults(List<Member> members) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/Results.fxml"));
 
+        resultContent = loader.load();
+        resultContent.getStylesheets().add(getClass().getResource("/css/Results.css").toExternalForm());
+
+        ResultController controller = loader.getController();
+        controller.initData(members);
+        ((Managed) controller).stageManager = this;
+
+        stage.getScene().setRoot(resultContent);
     }
 
     public void help(HelpPage page) {

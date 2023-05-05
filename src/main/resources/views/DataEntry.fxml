@@ -10,7 +10,7 @@
 <?import javafx.scene.text.TextFlow?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="dev.liambloom.nhs.inductionStage.gui.DataEntry"
+            fx:controller="dev.liambloom.nhs.inductionStage.gui.DataEntryController"
             id="root">
     <center>
 

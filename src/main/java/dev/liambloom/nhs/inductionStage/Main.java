@@ -21,7 +21,12 @@ public class Main {
                         13, OfficerPosition.Treasurer,
                         14, OfficerPosition.VicePresident
                 ),
-                Map.of(),
+                Map.of(
+                        42, OfficerPosition.President,
+                        43, OfficerPosition.VicePresident,
+                        48, OfficerPosition.Secretary,
+                        51, OfficerPosition.Treasurer
+                ),
                 Map.of(
                         1, Award.Service,
                         34, Award.Character,

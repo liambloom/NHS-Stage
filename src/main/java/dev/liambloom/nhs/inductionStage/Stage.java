@@ -60,7 +60,7 @@ public class Stage {
     public List<Member> getLineup() {
         List<Member> r = new ArrayList<>(memberCount);
 
-        for (int i = incumbentOfficers.length - 1; i >= 0; i--) {
+        for (int i = 0; i < incumbentOfficers.length; i++) {
             r.add(incumbentOfficers[i]);
         }
 
