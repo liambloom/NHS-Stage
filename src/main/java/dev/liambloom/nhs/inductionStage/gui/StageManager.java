@@ -1,8 +1,19 @@
 package dev.liambloom.nhs.inductionStage.gui;
 
-import dev.liambloom.nhs.inductionStage.Member;
+import dev.liambloom.nhs.inductionStage.*;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.StringBinding;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -18,6 +29,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class StageManager extends Application {
@@ -75,6 +87,28 @@ public class StageManager extends Application {
         stage.setScene(new Scene(new Pane(), 600, 400));
 //        toStart();
         toDataEntry(CSVParser.parse(Path.of("members.csv"), Charset.defaultCharset(), CSVFormat.DEFAULT).getRecords());
+        List<Member> members = DataLoader.loadData(CSVParser.parse(Path.of("members.csv"), Charset.defaultCharset(), CSVFormat.DEFAULT), 3,
+                new ColumnNumbers(0, 1, 4, 6),
+                Map.of(
+                        4, OfficerPosition.Secretary,
+                        6, OfficerPosition.President,
+                        9, OfficerPosition.Treasurer,
+                        10, OfficerPosition.VicePresident
+                ),
+                Map.of(
+                        42, OfficerPosition.President,
+                        43, OfficerPosition.VicePresident,
+                        48, OfficerPosition.Secretary,
+                        51, OfficerPosition.Treasurer
+                ),
+                Map.of(
+                        1, Award.Service,
+                        33, Award.Character,
+                        8, Award.Scholarship,
+                        38, Award.Leadership
+                ));
+
+//        toResults(members);
 
         stage.setTitle("Stage Builder for NHS");
 //        stage.setMaximized(true);
@@ -146,10 +180,97 @@ public class StageManager extends Application {
     }
 
     public static abstract class Managed {
+        @FXML
+        private final ReadOnlyBooleanProperty ordered = new ReadOnlyBooleanWrapper(isOrdered()).getReadOnlyProperty();
+
         private StageManager stageManager;
 
         protected StageManager getStageManager() {
             return stageManager;
+        }
+
+        public abstract boolean isOrdered();
+
+        public final ReadOnlyBooleanProperty orderedProperty() {
+            return ordered;
+        }
+
+        public abstract void next(ActionEvent event) throws IOException;
+
+        public abstract void prev(ActionEvent event) throws IOException;
+
+        public abstract ObservableBooleanValue requiredProperty();
+
+        public boolean isRequired() {
+            return requiredProperty().get();
+        }
+
+        public abstract ObservableBooleanValue completedProperty();
+
+        public boolean isCompleted() {
+            return completedProperty().get();
+        }
+
+        public abstract StringBinding nextTextProperty();
+
+        public String getNextText() {
+            return nextTextProperty().get();
+        }
+    }
+
+    public static abstract class UnorderedManaged extends Managed {
+
+        @Override
+        public final boolean isOrdered() {
+            return false;
+        }
+
+        @Override
+        public void next(ActionEvent event) {
+            throw new UnsupportedOperationException("next");
+        }
+
+        @Override
+        public void prev(ActionEvent event) {
+            throw new UnsupportedOperationException("prev");
+        }
+
+        @Override
+        public ObservableBooleanValue requiredProperty() {
+            throw new UnsupportedOperationException("required");
+        }
+
+        @Override
+        public ObservableBooleanValue completedProperty() {
+            throw new UnsupportedOperationException("completed");
+        }
+
+        @Override
+        public StringBinding nextTextProperty() {
+            throw new UnsupportedOperationException("nextText");
+        }
+    }
+
+    public static abstract class OrderedManaged extends Managed {
+        @FXML
+        private StringBinding nextText =
+                Bindings.when(Bindings.and(Bindings.not(requiredProperty()), Bindings.not(completedProperty())))
+                .then("Skip")
+                .otherwise("Next");
+
+        @Override
+        public final boolean isOrdered() {
+            return true;
+        }
+
+        @Override
+        public ObservableBooleanValue requiredProperty() {
+            return new SimpleBooleanProperty(false);
+        }
+
+        @Override
+        public StringBinding nextTextProperty() {
+            return nextText;
         }
     }
 }

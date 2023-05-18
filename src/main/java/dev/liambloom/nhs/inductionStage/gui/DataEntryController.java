@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class DataEntryController extends StageManager.Managed {
+public class DataEntryController extends StageManager.UnorderedManaged {
     @FXML
     private TableView<CSVRecord> dataTable;
 
@@ -66,9 +66,9 @@ public class DataEntryController extends StageManager.Managed {
     private boolean columnFocusFreezer = false;
 
     public void initialize() {
-        instructions.textProperty().bind(Bindings.select(currentSelector, "getInstruction").asString());
+        instructions.textProperty().bind(Bindings.select(currentSelector, "instruction").asString());
 
-        ObjectBinding<SelectionType> selectionType = Bindings.select(currentSelector, "getSelectionType");
+        ObjectBinding<SelectionType> selectionType = Bindings.select(currentSelector, "selectionType");
 
         dataTable.getSelectionModel().selectionModeProperty().bind(
                 new When(selectionType.isEqualTo(DataSelector.SelectionType.Row))
@@ -144,9 +144,9 @@ public class DataEntryController extends StageManager.Managed {
             currentSelector.get().setSelection(selection);
         });
 
-        next.disableProperty().bind(Bindings.selectBoolean(currentSelector, "getRequired")
+        next.disableProperty().bind(Bindings.selectBoolean(currentSelector, "required")
                 .and(Bindings.select(currentSelector, "selection").isNull()));
-        next.textProperty().bind(new When(Bindings.selectBoolean(currentSelector, "getRequired").not()
+        next.textProperty().bind(new When(Bindings.selectBoolean(currentSelector, "required").not()
                 .and(Bindings.select(currentSelector, "selection").isNull()))
                 .then("Skip")
                 .otherwise("Next"));
@@ -208,8 +208,8 @@ public class DataEntryController extends StageManager.Managed {
         return map;
     }
 
-    @FXML
-    private void next(ActionEvent event) throws IOException {
+    @Override
+    public void next(ActionEvent event) throws IOException {
         if (i.get() >= selectors.size() - 1) {
             Iterator<Integer> iter = selectors.stream().map(DataSelector::getSelection).iterator();
             int headerRows = iter.next() + 1;
@@ -229,8 +229,8 @@ public class DataEntryController extends StageManager.Managed {
         }
     }
 
-    @FXML
-    private void prev(ActionEvent event) throws IOException {
+    @Override
+    public void prev(ActionEvent event) throws IOException {
         if (i.get() <= 0) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Going back will return to the start screen. " +
                     "Are you sure you wish to go back?");

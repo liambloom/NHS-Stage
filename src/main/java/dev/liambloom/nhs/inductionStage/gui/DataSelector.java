@@ -3,8 +3,6 @@ package dev.liambloom.nhs.inductionStage.gui;
 import javafx.beans.property.*;
 import javafx.fxml.FXML;
 
-import java.util.Optional;
-
 public class DataSelector {
     public enum SelectionType {
         TopRows,
@@ -60,7 +58,7 @@ public class DataSelector {
         builder.append(' ')
                 .append(description);
 
-        if (!getRequired()) {
+        if (!isRequired()) {
             builder.append(" (optional)");
         }
 
@@ -73,7 +71,7 @@ public class DataSelector {
         return selectionType.get();
     }
 
-    public ReadOnlyObjectProperty<SelectionType> getSelectionTypeProperty() {
+    public ReadOnlyObjectProperty<SelectionType> selectionTypeProperty() {
         return selectionType;
     }
 
@@ -81,15 +79,15 @@ public class DataSelector {
         return instruction.get();
     }
 
-    public ReadOnlyStringProperty getInstructionProperty() {
+    public ReadOnlyStringProperty instructionProperty() {
         return instruction;
     }
 
-    public boolean getRequired() {
+    public boolean isRequired() {
         return required.get();
     }
 
-    public ReadOnlyBooleanProperty getRequiredProperty() {
+    public ReadOnlyBooleanProperty requiredProperty() {
         return required;
     }
 
