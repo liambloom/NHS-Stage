@@ -1,9 +1,7 @@
 package dev.liambloom.nhs.inductionStage.gui;
 
 import dev.liambloom.nhs.inductionStage.*;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.ObjectBinding;
-import javafx.beans.binding.When;
+import javafx.beans.binding.*;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -23,17 +21,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class DataEntryController extends StageManager.UnorderedManaged {
+public class DataEntryController extends StageManager.OrderedManaged {
     @FXML
     private TableView<CSVRecord> dataTable;
 
     private List<CSVRecord> records;
-
-    @FXML
-    private Button next;
-
-    @FXML
-    private Text instructions;
 
     @FXML
     private IntegerProperty i = new SimpleIntegerProperty(0);
@@ -66,8 +58,6 @@ public class DataEntryController extends StageManager.UnorderedManaged {
     private boolean columnFocusFreezer = false;
 
     public void initialize() {
-        instructions.textProperty().bind(Bindings.select(currentSelector, "instruction").asString());
-
         ObjectBinding<SelectionType> selectionType = Bindings.select(currentSelector, "selectionType");
 
         dataTable.getSelectionModel().selectionModeProperty().bind(
@@ -144,12 +134,11 @@ public class DataEntryController extends StageManager.UnorderedManaged {
             currentSelector.get().setSelection(selection);
         });
 
-        next.disableProperty().bind(Bindings.selectBoolean(currentSelector, "required")
-                .and(Bindings.select(currentSelector, "selection").isNull()));
-        next.textProperty().bind(new When(Bindings.selectBoolean(currentSelector, "required").not()
-                .and(Bindings.select(currentSelector, "selection").isNull()))
-                .then("Skip")
-                .otherwise("Next"));
+
+//        next.textProperty().bind(new When(Bindings.selectBoolean(currentSelector, "required").not()
+//                .and(Bindings.select(currentSelector, "selection").isNull()))
+//                .then("Skip")
+//                .otherwise("Next"));
     }
 
     protected void initData(List<CSVRecord> records) {
@@ -206,6 +195,30 @@ public class DataEntryController extends StageManager.UnorderedManaged {
         }
 
         return map;
+    }
+
+    public StringBinding instructions = Bindings.select(currentSelector, "instruction").asString();
+
+    @Override
+    public String getInstructions() {
+        return instructions.get();
+    }
+
+    @Override
+    public StringBinding instructionsProperty() {
+        return instructions;
+    }
+
+//    public BooleanBinding required = requiredProperty();
+
+    @Override
+    public BooleanBinding requiredProperty() {
+        return Bindings.selectBoolean(currentSelector, "required");
+    }
+
+    @Override
+    public BooleanBinding completedProperty() {
+        return Bindings.select(currentSelector, "selection").isNotNull();
     }
 
     @Override

@@ -10,7 +10,9 @@ import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,6 +20,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.apache.commons.csv.CSVFormat;
@@ -36,10 +39,11 @@ public class StageManager extends Application {
     // TODO: Make it so there is only one scene, and the root node changes
 
     private Stage stage;
-    private Parent startContent;
-    private Parent helpContent;
-    private Parent dataEntry;
-    private Parent resultContent;
+    private RootController rootController;
+    private Page startContent;
+    private Page helpContent;
+    private Page dataEntry;
+    private Page resultContent;
 
     public Stage getStage() {
         return this.stage;
@@ -84,7 +88,13 @@ public class StageManager extends Application {
             }
         });
 
-        stage.setScene(new Scene(new Pane(), 600, 400));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/Root.fxml"));
+        BorderPane root = loader.load();
+        root.getStylesheets().add(getClass().getResource("/css/DataEntry.css").toExternalForm());
+        stage.setScene(new Scene(root));
+        rootController = loader.getController();
+        ((Managed) rootController).stageManager = this;
+
 //        toStart();
         toDataEntry(CSVParser.parse(Path.of("members.csv"), Charset.defaultCharset(), CSVFormat.DEFAULT).getRecords());
         List<Member> members = DataLoader.loadData(CSVParser.parse(Path.of("members.csv"), Charset.defaultCharset(), CSVFormat.DEFAULT), 3,
@@ -125,54 +135,54 @@ public class StageManager extends Application {
 //        }
 //    }
 
+
     public void toStart() throws IOException {
         if (startContent == null) {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/Start.fxml"));
 
-            startContent = loader.load();
+            startContent = new Page(loader);
 //            startScene = newScene(startContent);
-            startContent.getStylesheets().add(getClass().getResource("/css/Start.css").toExternalForm());
+            startContent.node().getStylesheets().add(getClass().getResource("/css/Start.css").toExternalForm());
 
-            Managed controller = loader.getController();
-            controller.stageManager = this;
+            startContent.controller().stageManager = this;
         }
 
         dataEntry = null;
         resultContent = null;
 //        stage.setScene(startScene);
-        stage.getScene().setRoot(startContent);
+        rootController.setPage(startContent);
     }
 
     public void toDataEntry(List<CSVRecord> csv) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/DataEntry.fxml"));
 
-        dataEntry = loader.load();
+        dataEntry = new Page(loader);
 //        dataEntry = newScene(dataContent);
-        dataEntry.getStylesheets().add(getClass().getResource("/css/DataEntry.css").toExternalForm());
+        dataEntry.node().getStylesheets().add(getClass().getResource("/css/DataEntry.css").toExternalForm());
 
-        DataEntryController controller = loader.getController();
-        controller.initData(csv);
-        ((Managed) controller).stageManager = this;
+//        DataEntryController controller = loader.getController();
+        ((DataEntryController) dataEntry.controller()).initData(csv);
+        dataEntry.controller().stageManager = this;
 
         toLastDataEntry();
     }
 
     public void toLastDataEntry() {
         resultContent = null;
-        stage.getScene().setRoot(dataEntry);
+        rootController.setPage(dataEntry);
     }
 
     public void toResults(List<Member> members) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/Results.fxml"));
 
-        resultContent = loader.load();
-        resultContent.getStylesheets().add(getClass().getResource("/css/Results.css").toExternalForm());
+        resultContent = new Page(loader);
+        resultContent.node().getStylesheets().add(getClass().getResource("/css/Results.css").toExternalForm());
 
-        ResultController controller = loader.getController();
-        controller.initData(members);
-        ((Managed) controller).stageManager = this;
+//        ResultController controller = loader.getController();
+        ((ResultController) resultContent.controller()).initData(members);
+        resultContent.controller().stageManager = this;
 
-        stage.getScene().setRoot(resultContent);
+        rootController.setPage(resultContent);
     }
 
     public void help(HelpPage page) {
@@ -195,9 +205,9 @@ public class StageManager extends Application {
             return ordered;
         }
 
-        public abstract void next(ActionEvent event) throws IOException;
+        public abstract void next(ActionEvent event) throws Exception;
 
-        public abstract void prev(ActionEvent event) throws IOException;
+        public abstract void prev(ActionEvent event) throws Exception;
 
         public abstract ObservableBooleanValue requiredProperty();
 
@@ -211,10 +221,10 @@ public class StageManager extends Application {
             return completedProperty().get();
         }
 
-        public abstract StringBinding nextTextProperty();
+        public abstract ObservableStringValue instructionsProperty();
 
-        public String getNextText() {
-            return nextTextProperty().get();
+        public String getInstructions() {
+            return instructionsProperty().get();
         }
     }
 
@@ -226,38 +236,35 @@ public class StageManager extends Application {
         }
 
         @Override
-        public void next(ActionEvent event) {
+        public void next(ActionEvent event) throws Exception {
             throw new UnsupportedOperationException("next");
         }
 
         @Override
-        public void prev(ActionEvent event) {
+        public void prev(ActionEvent event) throws Exception {
             throw new UnsupportedOperationException("prev");
         }
 
         @Override
         public ObservableBooleanValue requiredProperty() {
-            throw new UnsupportedOperationException("required");
+//            throw new UnsupportedOperationException("required");
+            return new SimpleBooleanProperty(false);
         }
 
         @Override
         public ObservableBooleanValue completedProperty() {
-            throw new UnsupportedOperationException("completed");
+//            throw new UnsupportedOperationException("completed");
+            return new SimpleBooleanProperty(false);
         }
 
         @Override
-        public StringBinding nextTextProperty() {
-            throw new UnsupportedOperationException("nextText");
+        public ObservableStringValue instructionsProperty() {
+//            throw new UnsupportedOperationException("instructions");
+            return new SimpleStringProperty("");
         }
     }
 
     public static abstract class OrderedManaged extends Managed {
-        @FXML
-        private StringBinding nextText =
-                Bindings.when(Bindings.and(Bindings.not(requiredProperty()), Bindings.not(completedProperty())))
-                .then("Skip")
-                .otherwise("Next");
-
         @Override
         public final boolean isOrdered() {
             return true;
@@ -265,12 +272,7 @@ public class StageManager extends Application {
 
         @Override
         public ObservableBooleanValue requiredProperty() {
-            return new SimpleBooleanProperty(false);
-        }
-
-        @Override
-        public StringBinding nextTextProperty() {
-            return nextText;
+            return new SimpleBooleanProperty(true);
         }
     }
 }
