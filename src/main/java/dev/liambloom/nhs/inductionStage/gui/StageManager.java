@@ -1,6 +1,6 @@
 package dev.liambloom.nhs.inductionStage.gui;
 
-import dev.liambloom.nhs.inductionStage.Member;
+import dev.liambloom.nhs.inductionStage.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -18,6 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class StageManager extends Application {
@@ -85,12 +86,50 @@ public class StageManager extends Application {
         rootController = rootLoader.getController();
 
         stage.setScene(new Scene(rootContent, 600, 400));
-//        toStart();
-        toDataEntry(CSVParser.parse(Path.of("members.csv"), Charset.defaultCharset(), CSVFormat.DEFAULT).getRecords());
+
+        List<String> params = getParameters().getRaw();
+        if (params.isEmpty() || !params.get(0).equals("debugStart")) {
+            toStart();
+        }
+        else {
+            gotoDebugStart(params.get(1));
+        }
 
         stage.setTitle("Stage Builder for NHS");
-//        stage.setMaximized(true);
         stage.show();
+    }
+
+    public void gotoDebugStart(String page) throws IOException {
+        Path memberList = Path.of("members.csv");
+
+        switch (page) {
+            case "Start" -> toStart();
+            case "DataEntry" -> toDataEntry(CSVParser.parse(memberList, Charset.defaultCharset(), CSVFormat.DEFAULT).getRecords());
+            case "Results" -> {
+                List<Member> members = DataLoader.loadData(CSVParser.parse(memberList, Charset.defaultCharset(), CSVFormat.DEFAULT), 3,
+                        new ColumnNumbers(0, 1, 4, 6),
+                        Map.of(
+                                4, OfficerPosition.Secretary,
+                                6, OfficerPosition.President,
+                                9, OfficerPosition.Treasurer,
+                                10, OfficerPosition.VicePresident
+                        ),
+                        Map.of(
+                                42, OfficerPosition.President,
+                                43, OfficerPosition.VicePresident,
+                                48, OfficerPosition.Secretary,
+                                51, OfficerPosition.Treasurer
+                        ),
+                        Map.of(
+                                1, Award.Service,
+                                33, Award.Character,
+                                8, Award.Scholarship,
+                                38, Award.Leadership
+                        ));
+
+                toResults(members);
+            }
+        }
     }
 
 //    private Scene newScene(Parent content) {
