@@ -1,13 +1,13 @@
-.root {
+#startInstructions {
     -fx-background-color: #eee;
     -fx-font-family: "Helvetica";
 }
 
-.root > VBox {
+#startInstructions {
     -fx-alignment: center;
 }
 
-.root Text {
+#startInstructions Text {
     -fx-fill: #333;
 }
 

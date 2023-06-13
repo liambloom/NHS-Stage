@@ -13,7 +13,7 @@
             onMouseClicked="#openFileChooser">
     <!--
             -->
-    <VBox>
+    <VBox id="startInstructions">
         <Text>Welcome to Stage Builder for NHS (&#169; Liam Bloom 2023)</Text>
         <Text>To begin, please upload the member list as a CSV file</Text>
         <Text>You can drag and drop or click anywhere to begin</Text>

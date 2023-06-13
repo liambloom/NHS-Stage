@@ -24,6 +24,7 @@ public class StageManager extends Application {
     // TODO: Make it so there is only one scene, and the root node changes
 
     private Stage stage;
+    private RootController rootController;
     private Parent startContent;
     private Parent helpContent;
     private Parent dataEntry;
@@ -72,9 +73,14 @@ public class StageManager extends Application {
             }
         });
 
-        stage.setScene(new Scene(new Pane(), 600, 400));
-//        toStart();
-        toDataEntry(CSVParser.parse(Path.of("members.csv"), Charset.defaultCharset(), CSVFormat.DEFAULT).getRecords());
+        FXMLLoader rootLoader = new FXMLLoader(getClass().getResource("/views/Root.fxml"));
+        Pane rootContent = rootLoader.load();
+        rootContent.getStylesheets().add(getClass().getResource("/css/Root.css").toExternalForm());
+        rootController = rootLoader.getController();
+
+        stage.setScene(new Scene(rootContent, 600, 400));
+        toStart();
+//        toDataEntry(CSVParser.parse(Path.of("members.csv"), Charset.defaultCharset(), CSVFormat.DEFAULT).getRecords());
 
         stage.setTitle("Stage Builder for NHS");
 //        stage.setMaximized(true);
@@ -106,7 +112,7 @@ public class StageManager extends Application {
         dataEntry = null;
         resultContent = null;
 //        stage.setScene(startScene);
-        stage.getScene().setRoot(startContent);
+        rootController.setPage(startContent);
     }
 
     public void toDataEntry(List<CSVRecord> csv) throws IOException {
@@ -125,7 +131,7 @@ public class StageManager extends Application {
 
     public void toLastDataEntry() {
         resultContent = null;
-        stage.getScene().setRoot(dataEntry);
+        rootController.setPage(dataEntry);
     }
 
     public void toResults(List<Member> members) throws IOException {
@@ -138,7 +144,7 @@ public class StageManager extends Application {
         controller.initData(members);
         ((Managed) controller).stageManager = this;
 
-        stage.getScene().setRoot(resultContent);
+        rootController.setPage(resultContent);
     }
 
     public void help(HelpPage page) {
