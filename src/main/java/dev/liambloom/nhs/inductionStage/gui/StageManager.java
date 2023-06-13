@@ -25,10 +25,10 @@ public class StageManager extends Application {
 
     private Stage stage;
     private RootController rootController;
-    private Parent startContent;
-    private Parent helpContent;
-    private Parent dataEntry;
-    private Parent resultContent;
+    private Page startContent;
+    private Page helpContent;
+    private Page dataEntry;
+    private Page resultContent;
 
     public Stage getStage() {
         return this.stage;
@@ -79,8 +79,8 @@ public class StageManager extends Application {
         rootController = rootLoader.getController();
 
         stage.setScene(new Scene(rootContent, 600, 400));
-        toStart();
-//        toDataEntry(CSVParser.parse(Path.of("members.csv"), Charset.defaultCharset(), CSVFormat.DEFAULT).getRecords());
+//        toStart();
+        toDataEntry(CSVParser.parse(Path.of("members.csv"), Charset.defaultCharset(), CSVFormat.DEFAULT).getRecords());
 
         stage.setTitle("Stage Builder for NHS");
 //        stage.setMaximized(true);
@@ -99,13 +99,11 @@ public class StageManager extends Application {
 
     public void toStart() throws IOException {
         if (startContent == null) {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/Start.fxml"));
-
-            startContent = loader.load();
+            startContent = new Page("Start");
 //            startScene = newScene(startContent);
-            startContent.getStylesheets().add(getClass().getResource("/css/Start.css").toExternalForm());
+            startContent.node().getStylesheets().add(getClass().getResource("/css/Start.css").toExternalForm());
 
-            Managed controller = loader.getController();
+            Managed controller = startContent.controller();
             controller.stageManager = this;
         }
 
@@ -116,13 +114,11 @@ public class StageManager extends Application {
     }
 
     public void toDataEntry(List<CSVRecord> csv) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/DataEntry.fxml"));
-
-        dataEntry = loader.load();
+        dataEntry = new Page("DataEntry");
 //        dataEntry = newScene(dataContent);
-        dataEntry.getStylesheets().add(getClass().getResource("/css/DataEntry.css").toExternalForm());
+        dataEntry.node().getStylesheets().add(getClass().getResource("/css/DataEntry.css").toExternalForm());
 
-        DataEntryController controller = loader.getController();
+        DataEntryController controller = (DataEntryController) dataEntry.controller();
         controller.initData(csv);
         ((Managed) controller).stageManager = this;
 
@@ -135,12 +131,11 @@ public class StageManager extends Application {
     }
 
     public void toResults(List<Member> members) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/Results.fxml"));
 
-        resultContent = loader.load();
-        resultContent.getStylesheets().add(getClass().getResource("/css/Results.css").toExternalForm());
+        resultContent = new Page("Results");
+        resultContent.node().getStylesheets().add(getClass().getResource("/css/Results.css").toExternalForm());
 
-        ResultController controller = loader.getController();
+        ResultController controller = (ResultController) resultContent.controller();
         controller.initData(members);
         ((Managed) controller).stageManager = this;
 
@@ -156,6 +151,10 @@ public class StageManager extends Application {
 
         protected StageManager getStageManager() {
             return stageManager;
+        }
+
+        protected Optional<OrderControls> orderControls() {
+            return Optional.empty();
         }
     }
 }

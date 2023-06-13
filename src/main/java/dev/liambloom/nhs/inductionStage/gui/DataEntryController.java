@@ -1,10 +1,9 @@
 package dev.liambloom.nhs.inductionStage.gui;
 
 import dev.liambloom.nhs.inductionStage.*;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.ObjectBinding;
-import javafx.beans.binding.When;
+import javafx.beans.binding.*;
 import javafx.beans.property.*;
+import javafx.beans.value.ObservableStringValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,10 +17,7 @@ import org.apache.commons.csv.CSVRecord;
 import dev.liambloom.nhs.inductionStage.gui.DataSelector.SelectionType;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DataEntryController extends StageManager.Managed {
     @FXML
@@ -29,12 +25,12 @@ public class DataEntryController extends StageManager.Managed {
 
     private List<CSVRecord> records;
 
-    @FXML
-    private Button next;
+//    @FXML
+//    private Button next;
 
-    @FXML
-    private Text instructions;
-
+//    @FXML
+//    private Text instructions;
+//
     @FXML
     private IntegerProperty i = new SimpleIntegerProperty(0);
 
@@ -66,8 +62,6 @@ public class DataEntryController extends StageManager.Managed {
     private boolean columnFocusFreezer = false;
 
     public void initialize() {
-        instructions.textProperty().bind(Bindings.select(currentSelector, "getInstruction").asString());
-
         ObjectBinding<SelectionType> selectionType = Bindings.select(currentSelector, "getSelectionType");
 
         dataTable.getSelectionModel().selectionModeProperty().bind(
@@ -143,13 +137,6 @@ public class DataEntryController extends StageManager.Managed {
 
             currentSelector.get().setSelection(selection);
         });
-
-        next.disableProperty().bind(Bindings.selectBoolean(currentSelector, "getRequired")
-                .and(Bindings.select(currentSelector, "selection").isNull()));
-        next.textProperty().bind(new When(Bindings.selectBoolean(currentSelector, "getRequired").not()
-                .and(Bindings.select(currentSelector, "selection").isNull()))
-                .then("Skip")
-                .otherwise("Next"));
     }
 
     protected void initData(List<CSVRecord> records) {
@@ -208,41 +195,65 @@ public class DataEntryController extends StageManager.Managed {
         return map;
     }
 
-    @FXML
-    private void next(ActionEvent event) throws IOException {
-        if (i.get() >= selectors.size() - 1) {
-            Iterator<Integer> iter = selectors.stream().map(DataSelector::getSelection).iterator();
-            int headerRows = iter.next() + 1;
-            ColumnNumbers colNumbers = new ColumnNumbers(iter.next(), iter.next(), iter.next(), iter.next());
+    @Override
+    public Optional<OrderControls> orderControls() {
+        return Optional.of(new OrderControls() {
+            @Override
+            public void next(ActionEvent event) throws IOException {
+                if (i.get() >= selectors.size() - 1) {
+                    Iterator<Integer> iter = selectors.stream().map(DataSelector::getSelection).iterator();
+                    int headerRows = iter.next() + 1;
+                    ColumnNumbers colNumbers = new ColumnNumbers(iter.next(), iter.next(), iter.next(), iter.next());
 
-            Map<Integer, OfficerPosition> incumbents = mapSetup(iter, OfficerPosition.values(), -headerRows);
-            Map<Integer, OfficerPosition> elect = mapSetup(iter, OfficerPosition.values(), -headerRows);
-            Map<Integer, Award> awards = mapSetup(iter, Award.values(), -headerRows);
+                    Map<Integer, OfficerPosition> incumbents = mapSetup(iter, OfficerPosition.values(), -headerRows);
+                    Map<Integer, OfficerPosition> elect = mapSetup(iter, OfficerPosition.values(), -headerRows);
+                    Map<Integer, Award> awards = mapSetup(iter, Award.values(), -headerRows);
 
-            List<Member> members = DataLoader.loadData(records, headerRows, colNumbers, incumbents, elect, awards);
-            getStageManager().toResults(members);
-        }
-        else {
-            dataTable.getSelectionModel().clearSelection();
-            i.set(i.get() + 1);
-            iChanged();
-        }
-    }
-
-    @FXML
-    private void prev(ActionEvent event) throws IOException {
-        if (i.get() <= 0) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Going back will return to the start screen. " +
-                    "Are you sure you wish to go back?");
-            if (alert.showAndWait().filter(ButtonType.OK::equals).isPresent()) {
-                getStageManager().toStart();
+                    List<Member> members = DataLoader.loadData(records, headerRows, colNumbers, incumbents, elect, awards);
+                    getStageManager().toResults(members);
+                }
+                else {
+                    dataTable.getSelectionModel().clearSelection();
+                    i.set(i.get() + 1);
+                    iChanged();
+                }
             }
-        }
-        else {
-            dataTable.getSelectionModel().clearSelection();
-            i.set(i.get() - 1);
-            iChanged();
-        }
+
+            @Override
+            public void prev(ActionEvent event) throws IOException {
+                if (i.get() <= 0) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Going back will return to the start screen. " +
+                            "Are you sure you wish to go back?");
+                    if (alert.showAndWait().filter(ButtonType.OK::equals).isPresent()) {
+                        getStageManager().toStart();
+                    }
+                }
+                else {
+                    dataTable.getSelectionModel().clearSelection();
+                    i.set(i.get() - 1);
+                    iChanged();
+                }
+            }
+
+            @Override
+            public StringBinding instructions() {
+                return Bindings.select(currentSelector, "getInstruction").asString();
+            }
+
+            @Override
+            public StringBinding nextText() {
+                return new When(Bindings.selectBoolean(currentSelector, "getRequired").not()
+                        .and(Bindings.select(currentSelector, "selection").isNull()))
+                        .then("Skip")
+                        .otherwise("Next");
+            }
+
+            @Override
+            public BooleanBinding nextDisable() {
+                return Bindings.selectBoolean(currentSelector, "getRequired")
+                        .and(Bindings.select(currentSelector, "selection").isNull());
+            }
+        });
     }
 }
 
