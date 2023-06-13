@@ -9,7 +9,20 @@
 <VBox xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="dev.liambloom.nhs.inductionStage.gui.ResultController">
-    <Button text="Download" onAction="#download" />
-    <Button text="Copy Lineup" onAction="#copyLineup" />
-    <Button text="Reset" onAction="#reset" />
+    <TabPane>
+        <Tab text="Seating Chart" closable="false">
+            <VBox styleClass="tabRoot" fx:id="foo">
+                <Button text="Download" onAction="#download"/>
+                <GridPane fx:id="seatingChart" id="seatingChart" />
+            </VBox>
+
+        </Tab>
+        <Tab text="Lineup" closable="false">
+            <VBox>
+
+                <Button text="Copy Lineup" onAction="#copyLineup"/>
+            </VBox>
+
+        </Tab>
+    </TabPane>
 </VBox>

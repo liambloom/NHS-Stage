@@ -1,0 +1,21 @@
+.tabRoot {
+    -fx-padding: 5px;
+    -fx-spacing: 5px;
+}
+#seatingChart {
+    -fx-background-color: black;
+    -fx-vgap: 1px;
+    -fx-hgap: 1px;
+    -fx-padding: 1px;
+}
+.chartCell {
+    -fx-background-color: white;
+}
+
+Label {
+     -fx-background-color: red;
+}
+
+VBox {
+    -fx-background-color: blue;
+}

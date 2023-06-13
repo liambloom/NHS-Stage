@@ -3,7 +3,6 @@ package dev.liambloom.nhs.inductionStage;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -14,7 +13,7 @@ public class Stage {
 
     private final int rowCount;
 
-    private final String[] leftTable = { "Mayor", "Superintendent", "Principal", "Advisor" };
+    private final String[] vipTable = { "Mayor", "Superintendent", "Principal", "Advisor" };
 
     private final int memberCount;
 
@@ -65,31 +64,36 @@ public class Stage {
         return r;
     }
 
-    public void saveLayout(CSVPrinter writer) throws IOException {
-        int recordLength = Math.max(stageLeft.length, 4) + Math.max(stageRight.length, 4) + 1;
+    public String[][] getLayout() {
+        int rowLength = Math.max(stageLeft.length, 4) + Math.max(stageRight.length, 4) + 1;
 
-        Object[] raised = new Object[recordLength];
-        System.arraycopy(leftTable, 0, raised, stageLeft.length - leftTable.length, leftTable.length);
-        System.arraycopy(incumbentOfficers, 0, raised, stageLeft.length + 1, incumbentOfficers.length);
-        writer.printRecord(raised);
+        String[][] layout = new String[rowCount + 2][rowLength];
 
-        writer.printRecord(new Object[recordLength]);
+        System.arraycopy(vipTable, 0, layout[0], stageLeft.length - vipTable.length, vipTable.length);
+        System.arraycopy(Arrays.stream(incumbentOfficers).map(Member::toString).toArray(String[]::new), 0, layout[0],
+                stageLeft.length + 1, incumbentOfficers.length);
 
         for (int i = 0; i < rowCount; i++) {
-            Member[] row = new Member[recordLength];
+            String[] row = layout[i + 2];
             for (int j = 0; j < stageLeft.length; j++) {
-                row[j] = stageLeft[j][i];
+                row[j] = Objects.toString(stageLeft[j][i], null);
             }
             for (int j = 0; j < stageRight.length; j++) {
-                row[j + stageLeft.length + 1] = stageRight[j][i];
+                row[j + stageLeft.length + 1] = Objects.toString(stageRight[j][i], null);
             }
-            writer.printRecord((Object[]) row);
         }
 
+        return layout;
+    }
+
+    public void saveLayout(CSVPrinter writer) throws IOException {
+        for (String[] row : getLayout()) {
+            writer.printRecord((Object[]) row);
+        }
         writer.close();
     }
 
-    public SeatingGroup getSeatingGroup (Member member) {
+    private SeatingGroup getSeatingGroup (Member member) {
         if (member.officerPosition().isPresent()) {
             if (member.isOfficerElect()) {
                 return SeatingGroup.OfficersElect;
