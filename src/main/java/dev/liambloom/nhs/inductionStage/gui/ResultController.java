@@ -2,6 +2,10 @@ package dev.liambloom.nhs.inductionStage.gui;
 
 import dev.liambloom.nhs.inductionStage.Member;
 import dev.liambloom.nhs.inductionStage.Stage;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.value.ObservableStringValue;
 import javafx.event.ActionEvent;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -14,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 public class ResultController extends StageManager.Managed {
     private Stage stage;
@@ -49,5 +54,35 @@ public class ResultController extends StageManager.Managed {
 
     public void reset(ActionEvent event) throws IOException {
         getStageManager().toStart();
+    }
+
+    @Override
+    public Optional<OrderControls> orderControls() {
+        return Optional.of(new OrderControls() {
+            @Override
+            public void next(ActionEvent event) throws Exception {
+
+            }
+
+            @Override
+            public void prev(ActionEvent event) throws Exception {
+                getStageManager().toLastDataEntry();
+            }
+
+            @Override
+            public ObservableStringValue instructions() {
+                return new SimpleStringProperty("");
+            }
+
+            @Override
+            public ObservableStringValue nextText() {
+                return new SimpleStringProperty("Next");
+            }
+
+            @Override
+            public ObservableBooleanValue nextDisable() {
+                return new SimpleBooleanProperty(true);
+            }
+        });
     }
 }
