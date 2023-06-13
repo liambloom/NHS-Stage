@@ -39,36 +39,42 @@ public class StageManager extends Application {
         this.stage = stage;
 
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
-            throwable.printStackTrace();
+            try {
+                throwable.printStackTrace();
 
-            if (Platform.isFxApplicationThread()) {
-                while (throwable.getCause() != null && (throwable.getStackTrace()[0].getModuleName().startsWith("javafx")
-                        || throwable instanceof InvocationTargetException)) {
-                    throwable = throwable.getCause();
-                }
+                if (Platform.isFxApplicationThread()) {
+                    while (throwable.getCause() != null
+                            && (Optional.ofNullable(throwable.getStackTrace()[0].getModuleName())
+                                    .map(n -> n.startsWith("javafx"))
+                                    .orElse(false)
+                            || throwable instanceof InvocationTargetException)) {
+                        throwable = throwable.getCause();
+                    }
 
-                Alert alert = new Alert(Alert.AlertType.ERROR);
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
 
-                String message = Optional.ofNullable(throwable.getMessage()).orElse(throwable.getClass().getName());
+                    String message = Optional.ofNullable(throwable.getMessage()).orElse(throwable.getClass().getName());
 
-                if (throwable instanceof Exception) {
-                    alert.setHeaderText("Exception: " + message);
-                    alert.setContentText("You will now be returned to the starting page of this application.");
-                    alert.showAndWait();
-                    try {
-                        toStart();
-                    } catch (IOException e) {
+                    if (throwable instanceof Exception) {
+                        alert.setHeaderText("Exception: " + message);
+                        alert.setContentText("You will now be returned to the starting page of this application.");
+                        alert.showAndWait();
+                        try {
+                            toStart();
+                        } catch (IOException e) {
+                            System.exit(1);
+                        }
+                    } else {
+                        alert.setHeaderText("Error: " + message);
+                        alert.setContentText("The application will now close.");
+                        alert.showAndWait();
                         System.exit(1);
                     }
-                }
-                else {
-                    alert.setHeaderText("Error: " + message);
-                    alert.setContentText("The application will now close.");
-                    alert.showAndWait();
+                } else {
                     System.exit(1);
                 }
             }
-            else {
+            catch (Throwable e) {
                 System.exit(1);
             }
         });
