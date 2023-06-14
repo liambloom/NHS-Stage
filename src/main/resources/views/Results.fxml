@@ -6,23 +6,58 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.shape.Rectangle?>
 <VBox xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="dev.liambloom.nhs.inductionStage.gui.ResultController">
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="dev.liambloom.nhs.inductionStage.gui.ResultController">
     <TabPane>
         <Tab text="Seating Chart" closable="false">
-            <VBox styleClass="tabRoot" fx:id="foo">
-                <Button text="Download" onAction="#download"/>
-                <GridPane fx:id="seatingChart" id="seatingChart" />
+            <VBox styleClass="tabRoot">
+                <Button text="Download" onAction="#download" styleClass="goodButton" fx:id="downloadButton">
+                    <graphic>
+                        <ImageView fitHeight="16" preserveRatio="true" >
+                            <Image url="@../img/download-icon.png" />
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <ScrollPane VBox.vgrow="ALWAYS" maxHeight="Infinity">
+                    <GridPane fx:id="seatingChart" id="seatingChart" />
+                </ScrollPane>
             </VBox>
-
         </Tab>
         <Tab text="Lineup" closable="false">
             <VBox>
-
-                <Button text="Copy Lineup" onAction="#copyLineup"/>
+                <BorderPane fx:id="lineupBorderPane" maxHeight="Infinity" VBox.vgrow="ALWAYS">
+                    <center>
+                        <StackPane fx:id="lineupBoxContainer" id="lineupRoot" styleClass="tabRoot" maxHeight="Infinity">
+                            <VBox id="lineupBox" fx:id="lineupBox">
+                                <BorderPane id="lineupTop">
+                                    <left>
+                                        <ComboBox fx:id="lineupDropdown" />
+                                    </left>
+                                    <right>
+                                        <Button text="Copy Lineup" onAction="#copyLineup">
+                                            <graphic>
+                                                <ImageView fitHeight="16" preserveRatio="true" >
+                                                    <Image url="@../img/copy-icon.png" />
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </right>
+                                </BorderPane>
+                                <StackPane VBox.vgrow="SOMETIMES" id="lineupBottom" styleClass="transparent">
+                                    <ScrollPane fitToWidth="true" styleClass="transparent">
+                                        <VBox fx:id="lineupBottomContent" styleClass="transparent" />
+                                    </ScrollPane>
+                                </StackPane>
+                            </VBox>
+                            <Rectangle fx:id="lineupBorder" x="5" y="5" arcWidth="10" arcHeight="10" fill="transparent" stroke="#444" mouseTransparent="true" managed="false" />
+                        </StackPane>
+                    </center>
+                </BorderPane>
             </VBox>
-
         </Tab>
     </TabPane>
 </VBox>

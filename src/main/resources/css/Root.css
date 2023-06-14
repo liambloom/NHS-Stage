@@ -11,3 +11,8 @@
     -fx-border-width: 1 0 0 0 ;
     -fx-border-style: solid;
 }
+
+.goodButton {
+    -fx-background-color: #0096C9;
+    -fx-text-fill: white;
+}

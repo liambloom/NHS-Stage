@@ -10,12 +10,37 @@
 }
 .chartCell {
     -fx-background-color: white;
+    -fx-padding: 2px;
 }
-
-Label {
-     -fx-background-color: red;
+#lineupRoot {
+    -fx-pref-height: 100%;
 }
+#lineupBox {
+    -fx-background-color: #444;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-spacing: 1px;
 
-VBox {
-    -fx-background-color: blue;
+}
+#lineupTop {
+    -fx-background-color: #ddd;
+    /*-fx-border-radius: 10px 10px 0 0;*/
+    /*-fx-background-radius: 10px 10px 0 0;*/
+    -fx-padding: 5px;
+}
+#lineupBottom {
+    -fx-background-color: #eee;
+    /*-fx-border-radius: 0 0 10px 10px;*/
+    /*-fx-background-radius: 0 0 10px 10px;*/
+}
+#lineupBottom > ScrollPane {
+    -fx-padding: 5px;
+}
+.transparent {
+    -fx-background-color: transparent;
+}
+/* Apparently this is how you set the background of a scroll pane, according to:
+   https://forums.oracle.com/ords/apexds/post/css-styling-of-scrollpanes-broken-in-javafx-8-3855 */
+.transparent.scroll-pane > .viewport  {
+    -fx-background-color: transparent;
 }

@@ -181,8 +181,8 @@ public class StageManager extends Application {
         resultContent.node().getStylesheets().add(getClass().getResource("/css/Results.css").toExternalForm());
 
         ResultController controller = (ResultController) resultContent.controller();
-        controller.initData(members);
         ((Managed) controller).stageManager = this;
+        controller.initData(members);
 
         rootController.setPage(resultContent);
     }
