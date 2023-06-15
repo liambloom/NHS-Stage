@@ -1,7 +1,6 @@
 package dev.liambloom.nhs.inductionStage.gui;
 
 import javafx.event.ActionEvent;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -16,7 +15,7 @@ public class RootController {
     public AnchorPane bottomBar;
     private OrderControls orderControls;
 
-    public void setPage(Page page) {
+    public void setPage(StageManager.Page page) {
         rootPane.setCenter(page.node());
         Optional<OrderControls> tempOrderControls = page.controller().orderControls();
         boolean showOrderControls = tempOrderControls.isPresent();

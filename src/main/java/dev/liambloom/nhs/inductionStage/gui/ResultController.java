@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ResultController extends StageManager.Managed {
     private Stage stage;
@@ -32,17 +33,9 @@ public class ResultController extends StageManager.Managed {
     public VBox lineupBox;
     public Rectangle lineupBorder;
     public Pane lineupBottomContent;
-    public Pane lineupBoxContainer;
     public Pane lineupBorderPane;
 
     public void initialize() {
-        lineupBox.prefHeightProperty().bind(lineupBoxContainer.heightProperty().subtract(20));
-//        lineupRoot.prefHeightProperty().bind(((Region) lineupRoot.getParent()).heightProperty());
-
-        lineupBoxContainer.parentProperty().addListener((obs, oldV, newV) -> {
-            System.out.println(newV);
-        });
-
         lineupBorder.widthProperty().bind(lineupBox.widthProperty());
         lineupBorder.heightProperty().bind(lineupBox.heightProperty());
 
@@ -54,30 +47,34 @@ public class ResultController extends StageManager.Managed {
         lineupBox.setClip(lineupClip);
 //
 //
-        lineupDropdown.setItems(FXCollections.observableArrayList("Comma Seperated", "Separate Lines", "Bulleted List", "Numbered List"));
+        lineupDropdown.setItems(FXCollections.observableArrayList(
+                Arrays.stream(LineupFormatOptions.values())
+                        .map(Object::toString)
+                        .toArray(String[]::new)));
 //
         lineupDropdown.valueProperty().addListener((observable, oldVal, newVal) -> {
             lineupBottomContent.getChildren().clear();
-            switch (newVal) {
-                case "Comma Seperated" -> {
-                    StringBuilder builder = new StringBuilder();
-                    Iterator<Member> iter = stage.getLineup().iterator();
-                    if (iter.hasNext()) {
-                        builder.append(iter.next());
-                    }
-                    while (iter.hasNext()) {
-                        builder.append(", ")
-                                .append(iter.next());
-                    }
-
-                    Label text = new Label(builder.toString());
+            switch (LineupFormatOptions.fromString(newVal)) {
+                case CommaSeperated -> {
+                    Label text = new Label(lineupFencepost(", "));
                     text.setWrapText(true);
 
                     lineupBottomContent.getChildren().add(text);
                 }
-                case "Separate Lines" -> {
+                case SeparateLines -> {
                     for (Member member : stage.getLineup()) {
                         lineupBottomContent.getChildren().add(new Label(member.toString()));
+                    }
+                }
+                case BulletedList -> {
+                    for (Member member : stage.getLineup()) {
+                        lineupBottomContent.getChildren().add(new Label("\u2022 " + member));
+                    }
+                }
+                case NumberedList -> {
+                    int i = 1;
+                    for (Member member : stage.getLineup()) {
+                        lineupBottomContent.getChildren().add(new Label(i++ + ".\t" + member));
                     }
                 }
             }
@@ -125,6 +122,22 @@ public class ResultController extends StageManager.Managed {
 
     }
 
+    private String stringFencePost(Iterator<?> iter, String post) {
+        StringBuilder builder = new StringBuilder();
+        if (iter.hasNext()) {
+            builder.append(iter.next());
+        }
+        while (iter.hasNext()) {
+            builder.append(post)
+                    .append(iter.next());
+        }
+        return builder.toString();
+    }
+
+    private String lineupFencepost(String post) {
+        return stringFencePost(stage.getLineup().iterator(), post);
+    }
+
     public void download(ActionEvent event) throws IOException {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Save As");
@@ -145,8 +158,32 @@ public class ResultController extends StageManager.Managed {
     public void copyLineup(ActionEvent event) {
         Clipboard clipboard = Clipboard.getSystemClipboard();
         ClipboardContent content = new ClipboardContent();
-        String lineup = stage.getLineup().toString();
-        content.putString(lineup.substring(1, lineup.length() - 1));
+        List<Member> lineup = stage.getLineup();
+
+        switch (LineupFormatOptions.fromString(lineupDropdown.getValue())) {
+            case CommaSeperated -> {
+                content.putString(lineupFencepost(", "));
+            }
+            case SeparateLines -> {
+                content.putString(lineupFencepost(System.lineSeparator()));
+                content.putHtml(lineupFencepost("<br>"));
+            }
+            case BulletedList -> {
+                content.putString(lineup.stream().map(m -> "- " + m).collect(Collectors.joining(System.lineSeparator())));
+                content.putHtml("<ul>" + lineup.stream().map(m -> "<li>" + m + "</li>").collect(Collectors.joining()) + "</ul>");
+            }
+            case NumberedList -> {
+                StringBuilder builder = new StringBuilder();
+                int i = 1;
+                for (Member member : lineup) {
+                    builder.append(i++).append(".\t").append(member).append(System.lineSeparator());
+                }
+                content.putString(builder.toString());
+
+                content.putHtml("<ol>" + lineup.stream().map(m -> "<li>" + m + "</li>").collect(Collectors.joining()) + "</ol>");
+            }
+        }
+
         clipboard.setContent(content);
     }
 
@@ -160,7 +197,7 @@ public class ResultController extends StageManager.Managed {
 
             @Override
             public void prev(ActionEvent event) throws Exception {
-                getStageManager().toLastDataEntry();
+                getStageManager().toPrevPage();
             }
 
             @Override
@@ -178,11 +215,5 @@ public class ResultController extends StageManager.Managed {
                 return new SimpleBooleanProperty(true);
             }
         });
-    }
-
-    public void printSizes(ActionEvent event) {
-//        System.out.println(seatingChart.getBoundsInLocal());
-//        System.out.println(seatingChart.getPrefHeight());
-//        System.out.println(seatingChart.getMinHeight());
     }
 }

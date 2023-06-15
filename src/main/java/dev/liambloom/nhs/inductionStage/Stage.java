@@ -51,9 +51,7 @@ public class Stage {
     public List<Member> getLineup() {
         List<Member> r = new ArrayList<>(memberCount);
 
-        for (int i = 0; i < incumbentOfficers.length; i++) {
-            r.add(incumbentOfficers[i]);
-        }
+        r.addAll(Arrays.asList(incumbentOfficers));
 
         Stream.of(stageLeft, stageRight)
                 .flatMap(Stream::of)

@@ -24,14 +24,10 @@
 }
 #lineupTop {
     -fx-background-color: #ddd;
-    /*-fx-border-radius: 10px 10px 0 0;*/
-    /*-fx-background-radius: 10px 10px 0 0;*/
     -fx-padding: 5px;
 }
 #lineupBottom {
     -fx-background-color: #eee;
-    /*-fx-border-radius: 0 0 10px 10px;*/
-    /*-fx-background-radius: 0 0 10px 10px;*/
 }
 #lineupBottom > ScrollPane {
     -fx-padding: 5px;

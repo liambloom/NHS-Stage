@@ -17,19 +17,15 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class StageManager extends Application {
-    // TODO: Make it so there is only one scene, and the root node changes
-
     private Stage stage;
     private RootController rootController;
     private Page startContent;
     private Page helpContent;
-    private Page dataEntry;
-    private Page resultContent;
+    private Stack<Page> prevPages = new Stack<>();
+    private Page currentPage;
 
     public Stage getStage() {
         return this.stage;
@@ -145,50 +141,48 @@ public class StageManager extends Application {
     public void toStart() throws IOException {
         if (startContent == null) {
             startContent = new Page("Start");
-//            startScene = newScene(startContent);
-            startContent.node().getStylesheets().add(getClass().getResource("/css/Start.css").toExternalForm());
-
-            Managed controller = startContent.controller();
-            controller.stageManager = this;
+            startContent.addStyles("Start");
         }
 
-        dataEntry = null;
-        resultContent = null;
-//        stage.setScene(startScene);
-        rootController.setPage(startContent);
+        prevPages.clear();
+        toPage(startContent);
     }
 
     public void toDataEntry(List<CSVRecord> csv) throws IOException {
-        dataEntry = new Page("DataEntry");
-//        dataEntry = newScene(dataContent);
-        dataEntry.node().getStylesheets().add(getClass().getResource("/css/DataEntry.css").toExternalForm());
+        Page dataEntry = new Page("DataEntry");
+        dataEntry.addStyles("DataEntry");
 
         DataEntryController controller = (DataEntryController) dataEntry.controller();
         controller.initData(csv);
-        ((Managed) controller).stageManager = this;
 
-        toLastDataEntry();
-    }
-
-    public void toLastDataEntry() {
-        resultContent = null;
-        rootController.setPage(dataEntry);
+        toPage(dataEntry);
     }
 
     public void toResults(List<Member> members) throws IOException {
-
-        resultContent = new Page("Results");
-        resultContent.node().getStylesheets().add(getClass().getResource("/css/Results.css").toExternalForm());
+        Page resultContent = new Page("Results");
+        resultContent.addStyles("Results");
 
         ResultController controller = (ResultController) resultContent.controller();
-        ((Managed) controller).stageManager = this;
         controller.initData(members);
 
-        rootController.setPage(resultContent);
+        toPage(resultContent);
     }
 
     public void help(HelpPage page) {
 
+    }
+
+    private void toPage(Page page) {
+        if (currentPage != null) {
+            prevPages.add(currentPage);
+        }
+        currentPage = page;
+        rootController.setPage(page);
+    }
+
+    public void toPrevPage() {
+        currentPage = prevPages.pop();
+        rootController.setPage(currentPage);
     }
 
     public static abstract class Managed {
@@ -200,6 +194,37 @@ public class StageManager extends Application {
 
         protected Optional<OrderControls> orderControls() {
             return Optional.empty();
+        }
+    }
+
+    public class Page {
+        public final Parent node;
+        public final Managed controller;
+
+        public Page(Parent node, Managed controller) {
+            this.node = node;
+            controller.stageManager = StageManager.this;
+            this.controller = controller;
+        }
+
+        public Page(FXMLLoader loader) throws IOException {
+            this(loader.load(), loader.getController());
+        }
+
+        public Page(String name) throws IOException {
+            this(new FXMLLoader(Page.class.getResource("/views/" + name + ".fxml")));
+        }
+
+        public Parent node() {
+            return node;
+        }
+
+        public Managed controller() {
+            return controller;
+        }
+
+        public void addStyles(String name) {
+            node.getStylesheets().add(getClass().getResource("/css/" + name + ".css").toExternalForm());
         }
     }
 }
