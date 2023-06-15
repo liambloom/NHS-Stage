@@ -13,7 +13,7 @@ import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.List;
 
-public class StartPageController extends StageManager.UnorderedManaged {
+public class StartPageController extends StageManager.Managed {
     @FXML
     public void openFileChooser(MouseEvent event) throws IOException {
 

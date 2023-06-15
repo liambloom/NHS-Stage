@@ -15,7 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-public class ResultController extends StageManager.UnorderedManaged {
+public class ResultController extends StageManager.Managed {
     private Stage stage;
 
     public void initData(List<Member> members) {
