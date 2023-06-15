@@ -13,10 +13,10 @@
             prefHeight="400.0" prefWidth="600.0" fx:id="rootPane">
     <bottom>
         <AnchorPane minHeight="70" id="bottom-bar" fx:id="bottomBar">
-            <HBox AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" id="instructions-container" fillHeight="false">
+            <HBox AnchorPane.leftAnchor="5" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" id="instructions-container" fillHeight="false">
                 <Text fx:id="instructions" />
             </HBox>
-            <HBox AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" id="buttons-container" fillHeight="false">
+            <HBox AnchorPane.rightAnchor="5" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" id="buttons-container" fillHeight="false">
                 <Button text="Prev" onAction="#prev" />
                 <Button text="Next" onAction="#next" fx:id="next" />
             </HBox>
