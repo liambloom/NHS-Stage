@@ -10,7 +10,9 @@
 <StackPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="dev.liambloom.nhs.inductionStage.gui.StartPageController"
-            onMouseClicked="#openFileChooser">
+            onMouseClicked="#openFileChooser"
+            onDragOver="#dragOver"
+            onDragDropped="#acceptDragFile">
     <!--
             -->
     <VBox id="startInstructions">
