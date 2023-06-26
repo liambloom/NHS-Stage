@@ -210,7 +210,7 @@ public class DataEntryController extends StageManager.Managed {
                     Map<Integer, Award> awards = mapSetup(iter, Award.values(), -headerRows);
 
                     List<Member> members = DataLoader.loadData(records, headerRows, colNumbers, incumbents, elect, awards);
-                    getStageManager().toResults(members);
+                    getStageManager().toStageOrder(members);
                 }
                 else {
                     dataTable.getSelectionModel().clearSelection();

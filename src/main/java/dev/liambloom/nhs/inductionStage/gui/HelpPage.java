@@ -1,4 +1,5 @@
 package dev.liambloom.nhs.inductionStage.gui;
 
-public class HelpPage {
+public enum HelpPage {
+    Test
 }

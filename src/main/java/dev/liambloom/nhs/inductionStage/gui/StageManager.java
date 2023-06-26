@@ -158,6 +158,16 @@ public class StageManager extends Application {
         toPage(dataEntry);
     }
 
+    public void toStageOrder(List<Member> members) throws IOException {
+        Page stageOrder = new Page("StageOrder");
+        stageOrder.addStyles("StageOrder");
+
+        StageOrderController controller = (StageOrderController) stageOrder.controller();
+        controller.setMembers(members);
+
+        toPage(stageOrder);
+    }
+
     public void toResults(List<Member> members) throws IOException {
         Page resultContent = new Page("Results");
         resultContent.addStyles("Results");
