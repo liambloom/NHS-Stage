@@ -7,9 +7,24 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.scene.text.Text?>
+
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="dev.liambloom.nhs.inductionStage.gui.StageOrderController"
-            prefHeight="400.0" prefWidth="600.0">
-    <Text>Hi!</Text>
+            minHeight="0">
+    <ScrollPane AnchorPane.rightAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.topAnchor="0">
+        <StackPane id="paddingBox">
+            <GridPane id="stage">
+                <VBox GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    <TextField text="Mayor" />
+                    <TextField text="Superintendent" />
+                    <TextField text="Principal" />
+                    <TextField text="Advisor" />
+                </VBox>
+                <Label text="Incumbent Officers (not movable)" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <ListView fx:id="stageLeft" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <ListView fx:id="stageRight" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            </GridPane>
+        </StackPane>
+    </ScrollPane>
 </AnchorPane>

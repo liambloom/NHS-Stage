@@ -1,6 +1,7 @@
 package dev.liambloom.nhs.inductionStage.gui;
 
 import dev.liambloom.nhs.inductionStage.Member;
+import dev.liambloom.nhs.inductionStage.SeatingGroup;
 import dev.liambloom.nhs.inductionStage.Stage;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -82,8 +83,9 @@ public class ResultController extends StageManager.Managed {
 
     }
 
-    public void initData(List<Member> members) {
-        stage = new Stage(members.toArray(new Member[0]), 6);
+    public void initData(List<Member> members, List<SeatingGroup> stageLeft, List<SeatingGroup> stageRight) {
+        stage = new Stage(members.toArray(new Member[0]), 6, stageLeft.toArray(SeatingGroup[]::new),
+                stageRight.toArray(SeatingGroup[]::new));
 
         lineupBorderPane.setPrefHeight(1E15);
         lineupDropdown.setValue(lineupDropdown.getItems().get(0));

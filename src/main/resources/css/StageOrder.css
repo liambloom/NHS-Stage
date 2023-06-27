@@ -1,0 +1,7 @@
+#paddingBox {
+    -fx-padding: 5px;
+}
+#stage {
+    -fx-hgap: 5px;
+    -fx-vgap: 5px;
+}

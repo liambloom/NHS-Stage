@@ -13,8 +13,10 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.*;
@@ -98,33 +100,32 @@ public class StageManager extends Application {
     public void gotoDebugStart(String page) throws IOException {
         Path memberList = Path.of("members.csv");
 
+        List<Member> members = DataLoader.loadData(CSVParser.parse(memberList, Charset.defaultCharset(), CSVFormat.DEFAULT), 3,
+                new ColumnNumbers(0, 1, 4, 6),
+                Map.of(
+                        4, OfficerPosition.Secretary,
+                        6, OfficerPosition.President,
+                        9, OfficerPosition.Treasurer,
+                        10, OfficerPosition.VicePresident
+                ),
+                Map.of(
+                        42, OfficerPosition.President,
+                        43, OfficerPosition.VicePresident,
+                        48, OfficerPosition.Secretary,
+                        51, OfficerPosition.Treasurer
+                ),
+                Map.of(
+                        1, Award.Service,
+                        33, Award.Character,
+                        8, Award.Scholarship,
+                        38, Award.Leadership
+                ));
+
         switch (page) {
             case "Start" -> toStart();
             case "DataEntry" -> toDataEntry(CSVParser.parse(memberList, Charset.defaultCharset(), CSVFormat.DEFAULT).getRecords());
-            case "Results" -> {
-                List<Member> members = DataLoader.loadData(CSVParser.parse(memberList, Charset.defaultCharset(), CSVFormat.DEFAULT), 3,
-                        new ColumnNumbers(0, 1, 4, 6),
-                        Map.of(
-                                4, OfficerPosition.Secretary,
-                                6, OfficerPosition.President,
-                                9, OfficerPosition.Treasurer,
-                                10, OfficerPosition.VicePresident
-                        ),
-                        Map.of(
-                                42, OfficerPosition.President,
-                                43, OfficerPosition.VicePresident,
-                                48, OfficerPosition.Secretary,
-                                51, OfficerPosition.Treasurer
-                        ),
-                        Map.of(
-                                1, Award.Service,
-                                33, Award.Character,
-                                8, Award.Scholarship,
-                                38, Award.Leadership
-                        ));
-
-                toResults(members);
-            }
+            case "StageOrder" -> toStageOrder(members);
+            case "Results" -> toResults(members, StageOrderController.stageLeftDefault, StageOrderController.stageRightDefault);
         }
     }
 
@@ -161,6 +162,7 @@ public class StageManager extends Application {
     public void toStageOrder(List<Member> members) throws IOException {
         Page stageOrder = new Page("StageOrder");
         stageOrder.addStyles("StageOrder");
+        stageOrder.node.getStylesheets().add(getClass().getResource("/css/StageOrder.css").toExternalForm());
 
         StageOrderController controller = (StageOrderController) stageOrder.controller();
         controller.setMembers(members);
@@ -168,12 +170,12 @@ public class StageManager extends Application {
         toPage(stageOrder);
     }
 
-    public void toResults(List<Member> members) throws IOException {
+    public void toResults(List<Member> members, List<SeatingGroup> stageLeft, List<SeatingGroup> stageRight) throws IOException {
         Page resultContent = new Page("Results");
         resultContent.addStyles("Results");
 
         ResultController controller = (ResultController) resultContent.controller();
-        controller.initData(members);
+        controller.initData(members, stageLeft, stageRight);
 
         toPage(resultContent);
     }

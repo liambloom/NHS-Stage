@@ -1,5 +1,6 @@
 package dev.liambloom.nhs.inductionStage;
 
+import dev.liambloom.nhs.inductionStage.gui.StageOrderController;
 import javafx.application.Application;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -34,7 +35,9 @@ public class Main {
                         38, Award.Leadership
                 ));
 
-        Stage stage = new Stage(members.toArray(new Member[0]), 6);
+        Stage stage = new Stage(members.toArray(new Member[0]), 6, new SeatingGroup[]{ SeatingGroup.OfficersElect,
+                SeatingGroup.NewSeniors, SeatingGroup.NewJuniors, SeatingGroup.NewSophomores },
+                new SeatingGroup[]{ SeatingGroup.AwardWinners, SeatingGroup.ReturningSeniors, SeatingGroup.ReturningJuniors });
 
         Path out = Path.of("stage.csv");
         if (!Files.exists(out)) {

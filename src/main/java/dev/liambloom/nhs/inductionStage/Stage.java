@@ -17,12 +17,7 @@ public class Stage {
 
     private final int memberCount;
 
-    private static final SeatingGroup[] stageLeftGroups = { SeatingGroup.OfficersElect, SeatingGroup.NewSeniors,
-            SeatingGroup.NewJuniors, SeatingGroup.NewSophomores };
-    private static final SeatingGroup[] stageRightGroups = { SeatingGroup.AwardWinners, SeatingGroup.ReturningSeniors,
-            SeatingGroup.ReturningJuniors };
-
-    public Stage(Member[] members, int rowCount) {
+    public Stage(Member[] members, int rowCount, SeatingGroup[] stageLeftGroups, SeatingGroup[] stageRightGroups) {
         this.memberCount = members.length;
         this.rowCount = rowCount;
 
