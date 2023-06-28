@@ -40,7 +40,7 @@ public class DataEntryController extends StageManager.Managed {
             new DataSelector(SelectionType.Column, "members' first names"),
             new DataSelector(SelectionType.Column, "members' last names"),
             new DataSelector(SelectionType.Column, "members' year/grade (as a number OR a word)"),
-            new DataSelector(SelectionType.Column, "whether a member is returning"),
+            new DataSelector(SelectionType.Column, "whether a member is returning (were they a member last year?)"),
             new DataSelector(SelectionType.Row, "the incumbent (current) President"),
             new DataSelector(SelectionType.Row, "the incumbent (current) Vice President"),
             new DataSelector(SelectionType.Row, "the incumbent (current) Secretary"),

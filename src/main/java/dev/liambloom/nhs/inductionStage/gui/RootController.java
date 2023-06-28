@@ -2,6 +2,7 @@ package dev.liambloom.nhs.inductionStage.gui;
 
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
@@ -10,9 +11,9 @@ import java.util.Optional;
 
 public class RootController {
     public BorderPane rootPane;
-    public Text instructions;
+    public Label instructions;
     public Button next;
-    public AnchorPane bottomBar;
+    public BorderPane bottomBar;
     private OrderControls orderControls;
 
     public void setPage(StageManager.Page page) {
