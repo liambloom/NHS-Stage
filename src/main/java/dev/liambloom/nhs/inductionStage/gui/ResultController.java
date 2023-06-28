@@ -83,9 +83,9 @@ public class ResultController extends StageManager.Managed {
 
     }
 
-    public void initData(List<Member> members, List<SeatingGroup> stageLeft, List<SeatingGroup> stageRight) {
-        stage = new Stage(members.toArray(new Member[0]), 6, stageLeft.toArray(SeatingGroup[]::new),
-                stageRight.toArray(SeatingGroup[]::new));
+    public void initData(List<Member> members, List<String> vipTable, List<SeatingGroup> stageLeft, List<SeatingGroup> stageRight) {
+        stage = new Stage(members.toArray(new Member[0]), 6, vipTable.toArray(new String[0]),
+                stageLeft.toArray(new SeatingGroup[0]), stageRight.toArray(new SeatingGroup[0]));
 
         lineupBorderPane.setPrefHeight(1E15);
         lineupDropdown.setValue(lineupDropdown.getItems().get(0));

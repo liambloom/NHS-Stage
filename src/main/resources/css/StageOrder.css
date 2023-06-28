@@ -1,7 +1,21 @@
+#root {
+    -fx-background-color: #F4F4F4;
+}
 #paddingBox {
     -fx-padding: 5px;
 }
 #stage {
-    -fx-hgap: 5px;
-    -fx-vgap: 5px;
+    -fx-hgap: 1px;
+    -fx-vgap: 1px;
+    -fx-padding: 1px;
+    -fx-background-color: #444;
+}
+#stage > VBox {
+    -fx-background-color: #F4F4F4;
+    -fx-padding: 3px;
+    -fx-spacing: 3px;
+}
+.heading {
+    -fx-font-family: Helvetica;
+    -fx-font-size: 14px;
 }

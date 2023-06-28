@@ -13,13 +13,14 @@ public class Stage {
 
     private final int rowCount;
 
-    private final String[] vipTable = { "Mayor", "Superintendent", "Principal", "Advisor" };
+    private final String[] vipTable;
 
     private final int memberCount;
 
-    public Stage(Member[] members, int rowCount, SeatingGroup[] stageLeftGroups, SeatingGroup[] stageRightGroups) {
+    public Stage(Member[] members, int rowCount, String[] vipTable, SeatingGroup[] stageLeftGroups, SeatingGroup[] stageRightGroups) {
         this.memberCount = members.length;
         this.rowCount = rowCount;
+        this.vipTable = vipTable;
 
         // Create a map to sets of members, where each set is a seating group
         Map<SeatingGroup, NavigableSet<Member>> seatingGroups = new HashMap<>();
@@ -58,13 +59,14 @@ public class Stage {
     }
 
     public String[][] getLayout() {
-        int rowLength = Math.max(stageLeft.length, 4) + Math.max(stageRight.length, 4) + 1;
+        int leftColWidth = Math.max(stageLeft.length, vipTable.length);
+        int rowLength = leftColWidth + Math.max(stageRight.length, incumbentOfficers.length) + 1;
 
         String[][] layout = new String[rowCount + 2][rowLength];
 
-        System.arraycopy(vipTable, 0, layout[0], stageLeft.length - vipTable.length, vipTable.length);
+        System.arraycopy(vipTable, 0, layout[0], Math.max(stageLeft.length - vipTable.length, 0), vipTable.length);
         System.arraycopy(Arrays.stream(incumbentOfficers).map(Member::toString).toArray(String[]::new), 0, layout[0],
-                stageLeft.length + 1, incumbentOfficers.length);
+                leftColWidth + 1, incumbentOfficers.length);
 
         for (int i = 0; i < rowCount; i++) {
             String[] row = layout[i + 2];
@@ -72,7 +74,7 @@ public class Stage {
                 row[j] = Objects.toString(stageLeft[j][i], null);
             }
             for (int j = 0; j < stageRight.length; j++) {
-                row[j + stageLeft.length + 1] = Objects.toString(stageRight[j][i], null);
+                row[j + leftColWidth + 1] = Objects.toString(stageRight[j][i], null);
             }
         }
 

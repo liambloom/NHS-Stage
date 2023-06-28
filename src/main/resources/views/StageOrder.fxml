@@ -11,19 +11,29 @@
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="dev.liambloom.nhs.inductionStage.gui.StageOrderController"
-            minHeight="0">
+            minHeight="0" id="root">
     <ScrollPane AnchorPane.rightAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.topAnchor="0">
         <StackPane id="paddingBox">
             <GridPane id="stage">
-                <VBox GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" fx:id="vipTable" id="vipTable">
+                    <Text styleClass="heading">VIP Table</Text>
                     <TextField text="Mayor" />
                     <TextField text="Superintendent" />
                     <TextField text="Principal" />
                     <TextField text="Advisor" />
                 </VBox>
-                <Label text="Incumbent Officers (not movable)" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                <ListView fx:id="stageLeft" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <ListView fx:id="stageRight" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <VBox GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <Text styleClass="heading">Officers&#39; Table</Text>
+                    <TextField disable="true" text="Incumbent Officers (not movable)" />
+                </VBox>
+                <VBox GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    <Text styleClass="heading">Stage Left</Text>
+                    <ListView fx:id="stageLeft" />
+                </VBox>
+                <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <Text styleClass="heading">Stage Right</Text>
+                    <ListView fx:id="stageRight" />
+                </VBox>
             </GridPane>
         </StackPane>
     </ScrollPane>

@@ -125,7 +125,8 @@ public class StageManager extends Application {
             case "Start" -> toStart();
             case "DataEntry" -> toDataEntry(CSVParser.parse(memberList, Charset.defaultCharset(), CSVFormat.DEFAULT).getRecords());
             case "StageOrder" -> toStageOrder(members);
-            case "Results" -> toResults(members, StageOrderController.stageLeftDefault, StageOrderController.stageRightDefault);
+            case "Results" -> toResults(members, List.of("Mayor", "Superintendent", "Principal", "Advisor"),
+                    StageOrderController.stageLeftDefault, StageOrderController.stageRightDefault);
         }
     }
 
@@ -170,12 +171,12 @@ public class StageManager extends Application {
         toPage(stageOrder);
     }
 
-    public void toResults(List<Member> members, List<SeatingGroup> stageLeft, List<SeatingGroup> stageRight) throws IOException {
+    public void toResults(List<Member> members, List<String> vipTable, List<SeatingGroup> stageLeft, List<SeatingGroup> stageRight) throws IOException {
         Page resultContent = new Page("Results");
         resultContent.addStyles("Results");
 
         ResultController controller = (ResultController) resultContent.controller();
-        controller.initData(members, stageLeft, stageRight);
+        controller.initData(members, vipTable, stageLeft, stageRight);
 
         toPage(resultContent);
     }
