@@ -2,6 +2,10 @@
     -fx-padding: 5px;
     -fx-spacing: 5px;
 }
+#seatingChartTop {
+    -fx-spacing: 5px;
+    -fx-alignment: center-left;
+}
 #seatingChart {
     -fx-background-color: black;
     -fx-vgap: 1px;

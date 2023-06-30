@@ -8,18 +8,44 @@
 
 <?import javafx.scene.shape.Path?>
 <?import javafx.scene.shape.Line?>
-<AnchorPane xmlns="http://javafx.com/javafx"
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.shape.MoveTo?>
+<?import javafx.scene.shape.ArcTo?>
+<?import javafx.scene.shape.HLineTo?>
+<?import javafx.scene.shape.LineTo?>
+<BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="dev.liambloom.nhs.inductionStage.gui.HelpController"
-            prefHeight="400.0" prefWidth="600.0">
-    <BorderPane>
-        <top>
-            <HBox>
-                <Path>
-                    <elements>
-                    </elements>
-                </Path>
-            </HBox>
-        </top>
-    </BorderPane>
-</AnchorPane>
+            prefHeight="400.0" prefWidth="600.0" fx:id="root">
+    <center>
+        <ScrollPane fx:id="content" id="content" fitToWidth="true" />
+    </center>
+    <top> <!-- This has to be after center so the drop shadow isn't covered -->
+        <HBox id="title" fx:id="titleBox">
+            <Button onAction="#toPrev" id="backButton">
+                <graphic>
+                    <Path stroke="black" strokeWidth="1.6" strokeLineCap="ROUND" scaleX="1.2" scaleY="1.2">
+                        <elements>
+                            <MoveTo x="0" y="10" />
+                            <ArcTo x="20" y="10" radiusX="10" radiusY="10" />
+                            <ArcTo x="0" y="10" radiusX="10" radiusY="10" />
+                            <MoveTo x="6" y="10" />
+                            <HLineTo x="15" />
+                            <MoveTo x="5" y="10" />
+                            <LineTo x="10" y="5" />
+                            <MoveTo x="5" y="10" />
+                            <LineTo x="10" y="15" />
+                        </elements>
+                    </Path>
+                </graphic>
+            </Button>
+            <TextFlow fx:id="foo">
+                <Text>Help / &#8203;</Text>
+                <Text text="${controller.title}" />
+            </TextFlow>
+        </HBox>
+    </top>
+</BorderPane>

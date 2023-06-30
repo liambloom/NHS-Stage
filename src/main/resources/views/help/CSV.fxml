@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.text.Text?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      id="csvHelpRoot">
+    <VBox styleClass="paragraphs">
+        <TextFlow>
+            <Text>A comma-separated values (CSV) file is a type of file that holds data in a human-readable format that is
+                functionally similar to a table. Although you can open and edit them in any text editor, they are more commonly
+                viewed in spreadsheet applications like Microsoft Excel or Google Sheets.</Text>
+        </TextFlow>
+        <TextFlow>
+            <Text style="-fx-font-weight: bold;">Click the dropdown menus below for more information!</Text>
+        </TextFlow>
+    </VBox>
+
+    <TitledPane expanded="false" text="How to download a Google Sheet as a CSV">
+        <VBox styleClass="paragraphs">
+            <TextFlow>
+                <Text>Open the Google sheet you want to download. If there are multiple sheets (tabs) in the spreadsheet,
+                navigate to the sheet you want to download. Then, in the top menu, select &#8203;</Text>
+                <Text styleClass="code">File > Download > Comma Separated Values (.csv)</Text>
+            </TextFlow>
+        </VBox>
+    </TitledPane>
+    <TitledPane expanded="false" text="How to upload a CSV to Google Sheets">
+        <VBox styleClass="paragraphs">
+            <TextFlow>
+                <Text>If you would like to upload your CSV as a sheet (tab) in an existing spreadsheet, open that
+                spreadsheet. If you would like to upload it as a new spreadsheet, open any spreadsheet. Then, in the top
+                menu, select  &#8203;</Text>
+                <Text styleClass="code">File > Import</Text>
+                <Text>&#8203; and follow the on-screen prompts.</Text>
+            </TextFlow>
+        </VBox>
+    </TitledPane>
+    <TitledPane expanded="false" text="How to download an Excel Workbook as a CSV">
+        <VBox styleClass="paragraphs">
+            <TextFlow>
+                <Text>Open the Excel workbook you want to download. If there are multiple sheets (tabs) in the spreadsheet,
+                    navigate to the sheet you want to download. Then, in the top menu, select &#8203;</Text>
+                <Text styleClass="code">File > Save As</Text>
+                <Text>&#8203; and select &#8203;</Text>
+                <Text styleClass="code">CSV UTF-8 (comma delimited) (*.csv)</Text>
+                <Text>&#8203; as the file type</Text>
+            </TextFlow>
+        </VBox>
+    </TitledPane>
+    <TitledPane expanded="false" text="How to open a CSV in Excel">
+        <VBox styleClass="paragraphs">
+            <TextFlow>
+                <Text>Open Excel. Go to &#8203;</Text>
+                <Text styleClass="code">Open</Text>
+                <Text>&#8203; and select the CSV file you wish to open.</Text>
+            </TextFlow>
+        </VBox>
+    </TitledPane>
+</VBox>

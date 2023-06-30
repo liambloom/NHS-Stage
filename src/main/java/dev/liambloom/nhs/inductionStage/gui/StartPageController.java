@@ -1,11 +1,9 @@
 package dev.liambloom.nhs.inductionStage.gui;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.stage.FileChooser;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -43,11 +41,13 @@ public class StartPageController extends StageManager.Managed {
 
     @FXML
     public void openFileChooser(MouseEvent event) throws IOException {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV File", "*.csv"));
-        File memberList = fileChooser.showOpenDialog(getStageManager().getStage());
-        if (memberList != null) {
-            processFile(memberList);
+        if (event.getButton() == MouseButton.PRIMARY) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV File", "*.csv"));
+            File memberList = fileChooser.showOpenDialog(getStageManager().getStage());
+            if (memberList != null) {
+                processFile(memberList);
+            }
         }
     }
 
@@ -62,5 +62,15 @@ public class StartPageController extends StageManager.Managed {
     @FXML
     public void acceptDragFile(DragEvent event) throws IOException {
         event.setDropCompleted(processFile(event.getDragboard().getFiles().get(0)));
+    }
+
+    @FXML
+    public void toCsvHelp(ActionEvent event) throws IOException {
+        getStageManager().help(HelpPage.CSV);
+    }
+
+    @FXML
+    public void toLegalHelp(ActionEvent event) throws IOException {
+        getStageManager().help(HelpPage.Legal);
     }
 }

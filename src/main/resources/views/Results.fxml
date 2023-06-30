@@ -9,19 +9,23 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.shape.Rectangle?>
+<?import dev.liambloom.nhs.inductionStage.gui.HyperText?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="dev.liambloom.nhs.inductionStage.gui.ResultController">
     <TabPane>
         <Tab text="Seating Chart" closable="false">
             <VBox styleClass="tabRoot">
-                <Button text="Download" onAction="#download" styleClass="goodButton" fx:id="downloadButton">
-                    <graphic>
-                        <ImageView fitHeight="16" preserveRatio="true" >
-                            <Image url="@../img/download-icon.png" />
-                        </ImageView>
-                    </graphic>
-                </Button>
+                <HBox id="seatingChartTop">
+                    <Button text="Download CSV" onAction="#download" styleClass="goodButton" fx:id="downloadButton">
+                        <graphic>
+                            <ImageView fitHeight="16" preserveRatio="true" >
+                                <Image url="@../img/download-icon.png" />
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                    <HyperText onAction="#toCsvHelp">What is a CSV file and what do I do with it?</HyperText>
+                </HBox>
                 <ScrollPane VBox.vgrow="ALWAYS" maxHeight="Infinity">
                     <GridPane fx:id="seatingChart" id="seatingChart" />
                 </ScrollPane>

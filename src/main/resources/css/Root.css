@@ -13,7 +13,25 @@
     -fx-padding: 5px;
 }
 
+Button {
+    -fx-cursor: hand;
+}
+
 .goodButton {
     -fx-background-color: #0096C9;
     -fx-text-fill: white;
+}
+
+HyperText {
+    -fx-fill: #0095C8;
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
+HyperText:visited {
+    -fx-fill: #551A8B;
+}
+
+HyperText:armed {
+    -fx-fill: red;
 }

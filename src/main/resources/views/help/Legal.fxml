@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.text.Text?>
+<?import dev.liambloom.nhs.inductionStage.gui.HyperText?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      styleClass="paragraphs">
+    <TextFlow><Text>Stage Builder for NHS &#169; Liam Bloom 2023 Licenced under</Text></TextFlow>
+
+    <TextFlow><Text>"NHS" is a trademark of the National Association of Secondary School Principals, which has no association with this
+    software or its creator.</Text></TextFlow>
+
+    <TextFlow>
+        <Text>This software contains the &#8203;</Text>
+        <HyperText href="https://commons.apache.org/proper/commons-csv/">Commons CSV library</HyperText>
+        <Text>, created by &#8203;</Text>
+        <HyperText href="https://commons.apache.org/">Apache Commons</HyperText>
+        <Text>&#8203; and licenced under &#8203;</Text>
+        <HyperText href="https://www.apache.org/licenses/LICENSE-2.0">Apache Licence 2.0</HyperText>
+        <Text>.</Text>
+    </TextFlow>
+
+    <TextFlow>
+        <Text>This software contains &#8203;</Text>
+        <HyperText href="https://openjfx.io/">OpenJavaFX</HyperText>
+        <Text>, maintained by Oracle and Gluon and licenced under &#8203;</Text>
+        <HyperText href="https://openjdk.org/legal/gplv2+ce.html">GPL v2 + Classpath</HyperText> <!--onAction="#gplLicence"-->
+        <Text>.</Text>
+    </TextFlow>
+
+    <TextFlow>
+        <Text>The clipboard icon "copy-icon.png" was created by &#8203;</Text>
+        <HyperText href="https://lucide.dev/">Lucide</HyperText>
+        <Text>&#8203; (2022) and licenced under &#8203;</Text>
+        <HyperText href="https://github.com/lucide-icons/lucide/blob/main/LICENSE">ISC license</HyperText>
+        <Text>.</Text>
+    </TextFlow>
+
+    <TextFlow>
+        <Text>The download icon "downlaod-icon.png" was created by &#8203;</Text>
+        <HyperText href="https://m2.material.io/design/iconography/product-icons.html#design-principles">Google</HyperText>
+        <Text>&#8203; and licenced under &#8203;</Text>
+        <HyperText href="https://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</HyperText>
+        <Text>. The color of the icon has been chanced from black to white.</Text>
+    </TextFlow>
+</VBox>

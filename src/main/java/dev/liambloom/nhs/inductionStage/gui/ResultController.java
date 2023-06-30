@@ -189,6 +189,10 @@ public class ResultController extends StageManager.Managed {
         clipboard.setContent(content);
     }
 
+    public void toCsvHelp(ActionEvent event) throws IOException {
+        getStageManager().help(HelpPage.CSV);
+    }
+
     @Override
     public Optional<OrderControls> orderControls() {
         return Optional.of(new OrderControls() {

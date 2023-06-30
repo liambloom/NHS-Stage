@@ -1,0 +1,43 @@
+#title {
+    -fx-font-size: 25;
+    -fx-padding: 15;
+    -fx-spacing: 10;
+    -fx-alignment: center-left;
+    -fx-effect: dropshadow(gaussian, black, 7, 0, 0, 0);
+    -fx-background-color: #F4F4F4;
+    -fx-font-family: "Helvetica";
+}
+
+#title TextFlow {
+    -fx-padding: 0 0 2 0;
+}
+
+#backButton {
+    -fx-padding: 0;
+    -fx-border-width: 0;
+    -fx-background-color: none;
+}
+
+.paragraphs {
+    -fx-spacing: 1em;
+}
+
+.paragraphs TextFlow {
+    /*-fx-wrap-text: false;*/
+}
+
+.paragraphs Label {
+    /*-fx-wrap-text: true;*/
+}
+
+#csvHelpRoot {
+    -fx-spacing: 5px;
+}
+
+#csvHelpRoot TitlePane {
+    -fx-text-alignment: left;
+}
+
+.code {
+    -fx-font-family: "Courier New";
+}

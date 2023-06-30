@@ -2,12 +2,14 @@ package dev.liambloom.nhs.inductionStage.gui;
 
 import dev.liambloom.nhs.inductionStage.*;
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -77,6 +79,8 @@ public class StageManager extends Application {
                 System.exit(1);
             }
         });
+
+        HyperText.setStageManager(this);
 
         FXMLLoader rootLoader = new FXMLLoader(getClass().getResource("/views/Root.fxml"));
         Pane rootContent = rootLoader.load();
@@ -154,7 +158,7 @@ public class StageManager extends Application {
         Page dataEntry = new Page("DataEntry");
         dataEntry.addStyles("DataEntry");
 
-        DataEntryController controller = (DataEntryController) dataEntry.controller();
+        DataEntryController controller = dataEntry.controller();
         controller.initData(csv);
 
         toPage(dataEntry);
@@ -165,7 +169,7 @@ public class StageManager extends Application {
         stageOrder.addStyles("StageOrder");
         stageOrder.node.getStylesheets().add(getClass().getResource("/css/StageOrder.css").toExternalForm());
 
-        StageOrderController controller = (StageOrderController) stageOrder.controller();
+        StageOrderController controller = stageOrder.controller();
         controller.setMembers(members);
 
         toPage(stageOrder);
@@ -175,14 +179,22 @@ public class StageManager extends Application {
         Page resultContent = new Page("Results");
         resultContent.addStyles("Results");
 
-        ResultController controller = (ResultController) resultContent.controller();
+        ResultController controller = resultContent.controller();
         controller.initData(members, vipTable, stageLeft, stageRight);
 
         toPage(resultContent);
     }
 
-    public void help(HelpPage page) {
+    public void help(HelpPage page) throws IOException {
+        Page helpPage = new Page("Help");
+        helpPage.addStyles("Help");
 
+        Page content = new Page("help/" + page.name());
+
+        HelpController controller = helpPage.controller();
+        controller.toPage(page, content);
+
+        toPage(helpPage);
     }
 
     private void toPage(Page page) {
@@ -216,7 +228,9 @@ public class StageManager extends Application {
 
         public Page(Parent node, Managed controller) {
             this.node = node;
-            controller.stageManager = StageManager.this;
+            if (controller != null) {
+                controller.stageManager = StageManager.this;
+            }
             this.controller = controller;
         }
 
@@ -232,8 +246,8 @@ public class StageManager extends Application {
             return node;
         }
 
-        public Managed controller() {
-            return controller;
+        public <T extends Managed> T controller() {
+            return (T) controller;
         }
 
         public void addStyles(String name) {

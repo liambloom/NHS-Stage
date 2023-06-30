@@ -7,18 +7,25 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+<?import dev.liambloom.nhs.inductionStage.gui.HyperText?>
 <StackPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="dev.liambloom.nhs.inductionStage.gui.StartPageController"
-            onMouseClicked="#openFileChooser"
-            onDragOver="#dragOver"
-            onDragDropped="#acceptDragFile">
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="dev.liambloom.nhs.inductionStage.gui.StartPageController"
+           onMouseClicked="#openFileChooser"
+           onDragOver="#dragOver"
+           onDragDropped="#acceptDragFile">
     <!--
             -->
     <VBox id="startInstructions">
-        <Text>Welcome to Stage Builder for NHS (&#169; Liam Bloom 2023)</Text>
+        <TextFlow>
+            <Text>Welcome to Stage Builder for NHS (</Text>
+            <HyperText onAction="#toLegalHelp">&#169; Liam Bloom 2023</HyperText>
+            <Text>)</Text>
+        </TextFlow>
         <Text>To begin, please upload the member list as a CSV file</Text>
         <Text>You can drag and drop or click anywhere to begin</Text>
+        <HyperText onAction="#toCsvHelp">What is a CSV file and how do I get one?</HyperText>
     </VBox>
 
 </StackPane>
