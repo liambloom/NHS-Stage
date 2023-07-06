@@ -20,3 +20,7 @@ The download icon `downlaod-icon.png` was created by
 [Google](https://m2.material.io/design/iconography/product-icons.html#design-principles)
 and licenced under [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0). The
 color of the icon has been chanced from black to white.
+
+The flame in the application icon is a modified version of 
+[this icon](https://www.svgheart.com/product/torch-free-svg-cut-file/) licenced under
+[SvgHeart Free SVG Licence](https://www.svgheart.com/free-svgs-license/).

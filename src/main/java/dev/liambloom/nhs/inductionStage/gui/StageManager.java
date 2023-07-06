@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -22,6 +23,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class StageManager extends Application {
     private Stage stage;
@@ -98,6 +100,8 @@ public class StageManager extends Application {
         }
 
         stage.setTitle("Stage Builder for NHS");
+        stage.getIcons().addAll(Stream.of(16, 32, 48, 96)
+                .map(res -> new Image(getClass().getResource("/img/icon-" + res + ".png").toExternalForm())).toList());
         stage.show();
     }
 

@@ -50,4 +50,12 @@
         <HyperText href="https://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</HyperText>
         <Text>. The color of the icon has been chanced from black to white.</Text>
     </TextFlow>
+
+    <TextFlow>
+        <Text>The flame in the application icon is a modified version of &#8203;</Text>
+        <HyperText href="https://www.svgheart.com/product/torch-free-svg-cut-file/">this icon</HyperText>
+        <Text>&#8203; licenced under &#8203;</Text>
+        <HyperText href="https://www.svgheart.com/free-svgs-license/">SvgHeart Free SVG Licence</HyperText>
+        <Text>.</Text>
+    </TextFlow>
 </VBox>
