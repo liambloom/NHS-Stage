@@ -3,6 +3,7 @@ package dev.liambloom.nhs.inductionStage.gui;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.StringProperty;
+import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -14,11 +15,11 @@ import javafx.scene.layout.Region;
 import javafx.scene.text.TextFlow;
 
 public class HelpController extends StageManager.Managed {
-    public BorderPane root;
-    public ScrollPane content;
-    public HBox titleBox;
+    @FXML
+    private BorderPane root;
 
-    public TextFlow foo;
+    @FXML
+    private ScrollPane content;
     private final ReadOnlyStringWrapper editableTitle = new ReadOnlyStringWrapper();
     public final ReadOnlyStringProperty title = editableTitle.getReadOnlyProperty();
 

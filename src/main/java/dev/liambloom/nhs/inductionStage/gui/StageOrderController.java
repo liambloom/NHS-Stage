@@ -9,6 +9,7 @@ import javafx.beans.value.ObservableStringValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -24,9 +25,15 @@ import java.util.Optional;
 
 public class StageOrderController extends StageManager.Managed {
     private List<Member> members;
-    public ListView<SeatingGroup> stageLeft;
-    public ListView<SeatingGroup> stageRight;
-    public VBox vipTable;
+
+    @FXML
+    private ListView<SeatingGroup> stageLeft;
+
+    @FXML
+    private ListView<SeatingGroup> stageRight;
+
+    @FXML
+    private VBox vipTable;
 
     public static List<SeatingGroup> stageLeftDefault = List.of(SeatingGroup.OfficersElect, SeatingGroup.NewSeniors,
             SeatingGroup.NewJuniors, SeatingGroup.NewSophomores);

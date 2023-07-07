@@ -9,6 +9,7 @@ import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableStringValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.geometry.VPos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -29,12 +30,24 @@ import java.util.stream.Collectors;
 
 public class ResultController extends StageManager.Managed {
     private Stage stage;
-    public GridPane seatingChart;
-    public ComboBox<String> lineupDropdown;
-    public VBox lineupBox;
-    public Rectangle lineupBorder;
-    public Pane lineupBottomContent;
-    public Pane lineupBorderPane;
+
+    @FXML
+    private GridPane seatingChart;
+
+    @FXML
+    private ComboBox<String> lineupDropdown;
+
+    @FXML
+    private VBox lineupBox;
+
+    @FXML
+    private Rectangle lineupBorder;
+
+    @FXML
+    private Pane lineupBottomContent;
+
+    @FXML
+    private Pane lineupBorderPane;
 
     public void initialize() {
         lineupBorder.widthProperty().bind(lineupBox.widthProperty());
@@ -140,6 +153,7 @@ public class ResultController extends StageManager.Managed {
         return stringFencePost(stage.getLineup().iterator(), post);
     }
 
+    @FXML
     public void download(ActionEvent event) throws IOException {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Save As");
@@ -157,6 +171,7 @@ public class ResultController extends StageManager.Managed {
         stage.saveLayout(new CSVPrinter(Files.newBufferedWriter(out), CSVFormat.DEFAULT));
     }
 
+    @FXML
     public void copyLineup(ActionEvent event) {
         Clipboard clipboard = Clipboard.getSystemClipboard();
         ClipboardContent content = new ClipboardContent();
