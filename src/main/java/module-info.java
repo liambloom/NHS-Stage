@@ -1,4 +1,4 @@
-module NHS.Stage {
+module dev.liambloom.nhs.inductionStage {
     requires javafx.fxml;
     requires javafx.controls;
     requires javafx.graphics;
