@@ -97,6 +97,7 @@ debug "packaging..."
 #  because, as far as I can tell, 6.0 is the minimum version of powershell that supports
 #  any OS other than windows.
 
+# Icon types: win: ico; mac: icns; linux: png
 if ([System.Environment]::OSVersion.Platform -eq "Win32NT") {
     $OS = "windows"
     # $icon = 
@@ -116,6 +117,7 @@ $imageLoc="packaged/$OS/$name"
 
 Remove-Item -Force -Recurse -Path "$imageLoc" -ErrorAction SilentlyContinue
 
+# TODO: --icon
 jpackage --name "$name" --app-version $Version `
     --dest "packaged/$OS" --type app-image `
     --module-path target/temp-dependencies --module-path target/package.jar `
@@ -130,7 +132,9 @@ foreach ($Type in $Types) {
 
         jpackage --app-version $Version  --vendor "Liam Bloom"`
             --copyright "© Liam Bloom 2023" --description "To create stage and lineup for MHS NHS Induction" `
-            --dest "packaged/$OS" --app-image "$imageLoc" --type $Type
+            --dest "packaged/$OS" --app-image "$imageLoc" --type $Type `
+            --license-file .\LICENSE --about-url "https://github.com/liambloom/NHS-Stage" `
+            --win-menu --win-dir-chooser
     }
 }
 
