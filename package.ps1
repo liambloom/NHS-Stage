@@ -1,36 +1,15 @@
 [CmdletBinding(PositionalBinding=$false)]
-param([string]$Version='1.0', [switch]$DebugMode, $Type="app-image")
+param([string]$Version='1.0', [switch]$DebugMode, [string[]]$Types="app-image")
 
 function Write-Debug {
     param($content)
     if ($DebugMode) {
-        echo $content
+        Write-Output $content
     }
 }
 Set-Alias debug Write-Debug
 
 $deps="target/temp-dependencies"
-$name='Stage Builder For NHS'
-
-# $IsWindows was added in Powershell 6.0, but I want this to run on powershell 5.1, which 
-#  is what is shipped with windows by default. Hoewever, I can safely use $IsMacOS and $IsLinux
-#  because, as far as I can tell, 6.0 is the minimum version of powershell that supports
-#  any OS other than windows.
-
-if ([System.Environment]::OSVersion.Platform -eq "Win32NT") {
-    $OS = "windows"
-}
-elseif ($IsMacOS) {
-    $OS = "macos"
-}
-elseif ($IsLinux) {
-    $OS = "linux"
-}
-else {
-    $OS = "other"
-}
-
-$imageLoc="packaged/$OS/$name"
 
 debug "packaging..."
 mvn clean package -q
@@ -59,7 +38,7 @@ Get-ChildItem . | ForEach-Object {
 
             Move-Item module-info/*/module-info.java module-info/module-info.java
             Remove-Item module-info/* -Force -Recurse -Exclude module-info.java
-            xcopy staging\* module-info /t /e
+            Get-ChildItem staging/* -Directory | Copy-Item -Destination module-info -Filter {PSIsContainer} -Recurse
 
             $Packages = Get-ChildItem module-info -Directory -Recurse
             :packageLoop foreach ($Package in $Packages) {
@@ -112,29 +91,49 @@ Set-Location ../..
 
 debug "packaging..."
 
-# To add: --icon --copyright --description --vendor
 
-Remove-Item -Force -Recurse -Path "$imageLoc"
-if ($Type -ne "app-image") {
-    Remove-Item -Force -Path "packaged/$OS/$name.$type"
+# $IsWindows was added in Powershell 6.0, but I want this to run on powershell 5.1, which 
+#  is what is shipped with windows by default. Hoewever, I can safely use $IsMacOS and $IsLinux
+#  because, as far as I can tell, 6.0 is the minimum version of powershell that supports
+#  any OS other than windows.
+
+if ([System.Environment]::OSVersion.Platform -eq "Win32NT") {
+    $OS = "windows"
+    # $icon = 
+}
+elseif ($IsMacOS) {
+    $OS = "macos"
+}
+elseif ($IsLinux) {
+    $OS = "linux"
+}
+else {
+    $OS = "other"
 }
 
-jpackage --name "$name" --app-version $Version --vendor "Liam Bloom" `
-    --copyright "© Liam Bloom 2023" --description "To create stage and lineup for MHS NHS Induction" `
+$name='Stage Builder For NHS'
+$imageLoc="packaged/$OS/$name"
+
+Remove-Item -Force -Recurse -Path "$imageLoc" -ErrorAction SilentlyContinue
+
+jpackage --name "$name" --app-version $Version `
     --dest "packaged/$OS" --type app-image `
     --module-path target/temp-dependencies --module-path target/package.jar `
     --module dev.liambloom.nhs.inductionStage/dev.liambloom.nhs.inductionStage.gui.StageManager
 
-debug "$imageLoc"
 mkdir "$imageLoc/legal" | Out-Null
 Copy-Item -Path ./DEPENDENCY-LICENSES/* , ./LICENSE , ./NOTICE -Destination "$imageLoc/legal"
 
-if ($Type -ne "app-image") {
-    #How much of this info do I need to repeat?
-    jpackage  --name "$name" --app-version $Version --vendor "Liam Bloom"`
-        --copyright "© Liam Bloom 2023" --description "To create stage and lineup for MHS NHS Induction" `
-        --dest "packaged/$OS" --app-image "$imageLoc" --type $Type
+foreach ($Type in $Types) {
+    if ($Type -ne "app-image") {
+        Remove-Item -Force -Path "packaged/$OS/$name*.$Type" -ErrorAction SilentlyContinue
+
+        jpackage --app-version $Version  --vendor "Liam Bloom"`
+            --copyright "© Liam Bloom 2023" --description "To create stage and lineup for MHS NHS Induction" `
+            --dest "packaged/$OS" --app-image "$imageLoc" --type $Type
+    }
 }
+
 
 debug "done packaging"
 
