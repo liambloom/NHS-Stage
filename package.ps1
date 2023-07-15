@@ -1,3 +1,20 @@
+<#
+.SYNOPSIS
+Used to package the program into an installer using the jpacakge utility
+
+.PARAMETER Version
+The app version. Will be passed into jpackage as --app-version
+
+.PARAMETER Types
+One or more pacakge types. Each is run as a separate instance of jpackage, and 
+is passed in a --type. The "app-image" type is pacakged regardless of this parameter's
+value. Valid values (as of JDK 17) are {"app-image", "exe", "msi", "rpm", "deb", "pkg", "dmg"}
+
+.EXAMPLE
+package -Version 1.2 -Types exe, msi
+Pacakges the application at version 1.2, producing an app-image, exe installer, and msi installer
+#>
+
 [CmdletBinding(PositionalBinding=$false)]
 param([string]$Version='1.0', [switch]$DebugMode, [string[]]$Types="app-image")
 
@@ -9,10 +26,13 @@ function Write-Debug {
 }
 Set-Alias debug Write-Debug
 
+debug foo
+exit
+
 $deps="target/temp-dependencies"
 
 debug "packaging..."
-mvn clean package -q
+mvn clean compile package -q
 debug "done packaging"
 
 debug "copying dependencies..."
