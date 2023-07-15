@@ -100,7 +100,7 @@ public class StageManager extends Application {
         }
 
         stage.setTitle("Stage Builder for NHS");
-        stage.getIcons().addAll(Stream.of(16, 32, 48, 96)
+        stage.getIcons().addAll(Stream.of(16, 24, 32, 48, 64, 96, 256)
                 .map(res -> new Image(getClass().getResource("/img/icon-" + res + ".png").toExternalForm())).toList());
         stage.show();
     }

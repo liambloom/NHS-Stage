@@ -100,7 +100,7 @@ debug "packaging..."
 # Icon types: win: ico; mac: icns; linux: png
 if ([System.Environment]::OSVersion.Platform -eq "Win32NT") {
     $OS = "windows"
-    # $icon = 
+    $icon = "src/icon/icon.ico"
 }
 elseif ($IsMacOS) {
     $OS = "macos"
@@ -118,7 +118,7 @@ $imageLoc="packaged/$OS/$name"
 Remove-Item -Force -Recurse -Path "$imageLoc" -ErrorAction SilentlyContinue
 
 # TODO: --icon
-jpackage --name "$name" --app-version $Version `
+jpackage --name "$name" --app-version $Version --icon "$icon" `
     --dest "packaged/$OS" --type app-image `
     --module-path target/temp-dependencies --module-path target/package.jar `
     --module dev.liambloom.nhs.inductionStage/dev.liambloom.nhs.inductionStage.gui.StageManager
