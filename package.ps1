@@ -26,9 +26,6 @@ function Write-Debug {
 }
 Set-Alias debug Write-Debug
 
-debug foo
-exit
-
 $deps="target/temp-dependencies"
 
 debug "packaging..."
@@ -135,7 +132,7 @@ else {
 $name='Stage Builder For NHS'
 $imageLoc="packaged/$OS/$name"
 
-Remove-Item -Force -Recurse -Path "$imageLoc" -ErrorAction SilentlyContinue
+Remove-Item -Force -Recurse -Path "packaged/$OS" -ErrorAction SilentlyContinue
 
 # TODO: --icon
 jpackage --name "$name" --app-version $Version --icon "$icon" `
@@ -150,8 +147,7 @@ foreach ($Type in $Types) {
     if ($Type -ne "app-image") {
         Remove-Item -Force -Path "packaged/$OS/$name*.$Type" -ErrorAction SilentlyContinue
 
-        jpackage --app-version $Version  --vendor "Liam Bloom"`
-            --copyright "© Liam Bloom 2023" --description "To create stage and lineup for MHS NHS Induction" `
+        jpackage --app-version $Version  --vendor "Liam Bloom" --copyright "(C) Liam Bloom 2023" `
             --dest "packaged/$OS" --app-image "$imageLoc" --type $Type `
             --license-file .\LICENSE --about-url "https://github.com/liambloom/NHS-Stage" `
             --win-menu --win-dir-chooser
