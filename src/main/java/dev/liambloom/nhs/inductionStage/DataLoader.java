@@ -37,7 +37,8 @@ public class DataLoader {
             award.ifPresent(value -> awardWinners[value.ordinal()] = true);
 
             members.add(new Member(r.get(columnNumbers.firstName()), r.get(columnNumbers.lastName()),
-                    Grade.parse(r.get(columnNumbers.grade())), booleanParser(r.get(columnNumbers.isReturning())),
+                    Grade.parse(r.get(columnNumbers.grade()).trim()),
+                    booleanParser(r.get(columnNumbers.isReturning()).trim()),
                     officerPosition, isOfficerElect.get(), award));
             i++;
         }

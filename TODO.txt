@@ -1,0 +1,8 @@
+- [x] Add descrption of what the CSV should look like
+- [x] Somehow clarify header rows
+- [ ] Lineups for Sr. Destinations, Certificates, etc
+    - [x] Write code
+    - [ ] Test code
+    - [ ] Add to UI
+- [ ] Describe tabs (e.g. what is "lineup")
+- [x] Allow no header rows

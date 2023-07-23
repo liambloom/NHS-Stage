@@ -25,7 +25,7 @@
         </TextFlow>
         <Text>To begin, please upload the member list as a CSV file</Text>
         <Text>You can drag and drop or click anywhere to begin</Text>
-        <HyperText onAction="#toCsvHelp">What is a CSV file and how do I get one?</HyperText>
+        <HyperText onAction="#toCsvHelp">Click here for help</HyperText>
     </VBox>
 
 </StackPane>

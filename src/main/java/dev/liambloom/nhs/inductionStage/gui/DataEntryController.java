@@ -36,7 +36,7 @@ public class DataEntryController extends StageManager.Managed {
 
     @FXML
     private final ObservableList<DataSelector> selectors = FXCollections.observableArrayList(
-            new DataSelector(SelectionType.TopRows, "headers"),
+            new DataSelector(SelectionType.TopRows, "headers (there may be more than one \u2014 ANY rows at the top of the table that DON'T contain member data are headers)"),
             new DataSelector(SelectionType.Column, "members' first names"),
             new DataSelector(SelectionType.Column, "members' last names"),
             new DataSelector(SelectionType.Column, "members' year/grade (as a number OR a word)"),
@@ -78,6 +78,7 @@ public class DataEntryController extends StageManager.Managed {
             }
         });
 
+
         // Column focus
         dataTable.getFocusModel().focusedCellProperty().addListener((obs, oldVal, newVal) -> {
             if (!currentSelector.get().getSelectionType().equals(SelectionType.Column) || columnFocusFreezer) {
@@ -91,9 +92,9 @@ public class DataEntryController extends StageManager.Managed {
             }
         });
 
-        // TopRows focus
+        // TopRows and Rows focus
         dataTable.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-            if (!currentSelector.get().getSelectionType().equals(SelectionType.TopRows)) {
+            if (currentSelector.get().getSelectionType().equals(SelectionType.Column)) {
                 return;
             }
 
@@ -113,8 +114,24 @@ public class DataEntryController extends StageManager.Managed {
                 // focus the tableview
                 table.requestFocus();
 
+                ObservableList<TablePosition> selectedCells = dataTable.getSelectionModel().getSelectedCells();
+                int prevRow = selectedCells.isEmpty() ? -1 : selectedCells.stream()
+                        .map(TablePosition::getRow)
+                        .sorted()
+                        .skip(selectedCells.size() - 1)
+                        .findFirst()
+                        .orElseThrow();
+
                 table.getSelectionModel().clearSelection();
-                table.getSelectionModel().selectRange(0, row.getIndex() + 1);
+
+                if (row.getIndex() != prevRow) {
+                    if (currentSelector.get().getSelectionType().equals(SelectionType.TopRows)) {
+                        table.getSelectionModel().selectRange(0, row.getIndex() + 1);
+                    }
+                    else {
+                        table.getSelectionModel().select(row.getIndex());
+                    }
+                }
             }
         });
 
@@ -126,6 +143,7 @@ public class DataEntryController extends StageManager.Managed {
             ObservableList<TablePosition> selectedCells = dataTable.getSelectionModel().getSelectedCells();
 
             if (selectedCells.isEmpty()) {
+                currentSelector.get().setSelection(null);
                 return;
             }
 
@@ -165,7 +183,7 @@ public class DataEntryController extends StageManager.Managed {
         if (selector.getSelection() == null)
             return;
 
-        selectionUpdateFreeze = true;
+//        selectionUpdateFreeze = true;
 
         switch (selector.getSelectionType()) {
             case Row -> {
@@ -179,7 +197,7 @@ public class DataEntryController extends StageManager.Managed {
             }
         }
 
-        selectionUpdateFreeze = false;
+//        selectionUpdateFreeze = false;
     }
 
     private <T> Map<Integer, T> mapSetup(Iterator<Integer> iter, T[] values, int d) {
@@ -202,7 +220,7 @@ public class DataEntryController extends StageManager.Managed {
             public void next(ActionEvent event) throws IOException {
                 if (i.get() >= selectors.size() - 1) {
                     Iterator<Integer> iter = selectors.stream().map(DataSelector::getSelection).iterator();
-                    int headerRows = iter.next() + 1;
+                    int headerRows = Optional.ofNullable(iter.next()).orElse(-1) + 1;
                     ColumnNumbers colNumbers = new ColumnNumbers(iter.next(), iter.next(), iter.next(), iter.next());
 
                     Map<Integer, OfficerPosition> incumbents = mapSetup(iter, OfficerPosition.values(), -headerRows);
@@ -213,9 +231,11 @@ public class DataEntryController extends StageManager.Managed {
                     getStageManager().toStageOrder(members);
                 }
                 else {
+                    selectionUpdateFreeze = true;
                     dataTable.getSelectionModel().clearSelection();
                     i.set(i.get() + 1);
                     iChanged();
+                    selectionUpdateFreeze = false;
                 }
             }
 
@@ -229,9 +249,11 @@ public class DataEntryController extends StageManager.Managed {
                     }
                 }
                 else {
+                    selectionUpdateFreeze = true;
                     dataTable.getSelectionModel().clearSelection();
                     i.set(i.get() - 1);
                     iChanged();
+                    selectionUpdateFreeze = false;
                 }
             }
 

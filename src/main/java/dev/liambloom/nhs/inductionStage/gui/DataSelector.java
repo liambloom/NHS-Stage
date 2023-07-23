@@ -40,7 +40,7 @@ public class DataSelector {
 
     public DataSelector(SelectionType selectionType, boolean negative, String description) {
         this.selectionType = new SimpleObjectProperty<>(selectionType);
-        this.required = new SimpleBooleanProperty(!selectionType.equals(SelectionType.Row));
+        this.required = new SimpleBooleanProperty(selectionType.equals(SelectionType.Column));
 
         StringBuilder builder = new StringBuilder();
         builder.append("Please select the ")

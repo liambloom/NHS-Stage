@@ -4,6 +4,7 @@ import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class Stage {
@@ -44,7 +45,7 @@ public class Stage {
         incumbentOfficers = seatingGroups.get(SeatingGroup.IncumbentOfficers).descendingSet().toArray(new Member[0]);
     }
 
-    public List<Member> getLineup() {
+    public List<Member> getHallwayLineup() {
         List<Member> r = new ArrayList<>(memberCount);
 
         r.addAll(Arrays.asList(incumbentOfficers));
@@ -54,6 +55,50 @@ public class Stage {
                 .flatMap(Stream::of)
                 .filter(Objects::nonNull)
                 .forEachOrdered(r::add);
+
+        return r;
+    }
+
+    public List<Member> getNewMemberCallupOrder() {
+        List<Member> r = new ArrayList<>(memberCount);
+
+        Stream.of(stageLeft, stageRight)
+                .flatMap(Stream::of)
+                .flatMap(members -> {
+                    Stream.Builder<Member> builder = Stream.builder();
+                    for (int i = members.length - 1; i >= 0; i--) {
+                        builder.add(members[i]);
+                    }
+                    return builder.build();
+                })
+                .filter(Objects::nonNull)
+                .forEachOrdered(r::add);
+
+        return r;
+    }
+
+    public List<Member> getSeniorCallupOrder() {
+        List<Member> r = new ArrayList<>(memberCount);
+
+        r.addAll(Arrays.asList(incumbentOfficers).subList(0, incumbentOfficers.length - 1));
+
+        Stream.Builder<Member[]> stageRightReverseBuilder = Stream.builder();
+        for (int i = stageRight.length - 1; i >= 0; i--) {
+            stageRightReverseBuilder.add(stageRight[i]);
+        }
+
+        Stream.concat(Stream.of(stageLeft), stageRightReverseBuilder.build())
+                .flatMap(members -> {
+                    Stream.Builder<Member> builder = Stream.builder();
+                    for (int i = members.length - 1; i >= 0; i--) {
+                        builder.add(members[i]);
+                    }
+                    return builder.build();
+                })
+                .filter(Objects::nonNull)
+                .forEachOrdered(r::add);
+
+        r.add(incumbentOfficers[incumbentOfficers.length - 1]);
 
         return r;
     }

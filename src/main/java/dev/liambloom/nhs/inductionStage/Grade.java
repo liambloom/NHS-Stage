@@ -27,7 +27,7 @@ public enum Grade {
                 };
             }
             catch (NumberFormatException e2) {
-                throw new IllegalArgumentException(String.format(parseError, e));
+                throw new IllegalArgumentException(String.format(parseError, s));
             }
         }
     }

@@ -33,36 +33,7 @@
         </Tab>
         <Tab text="Lineup" closable="false">
             <VBox>
-                <BorderPane fx:id="lineupBorderPane" maxHeight="Infinity" VBox.vgrow="ALWAYS">
-                    <center>
-                        <StackPane id="lineupRoot" styleClass="tabRoot" maxHeight="Infinity">
-                            <StackPane>
-                                <VBox id="lineupBox" fx:id="lineupBox">
-                                    <BorderPane id="lineupTop">
-                                        <left>
-                                            <ComboBox fx:id="lineupDropdown" />
-                                        </left>
-                                        <right>
-                                            <Button text="Copy Lineup" onAction="#copyLineup">
-                                                <graphic>
-                                                    <ImageView fitHeight="16" preserveRatio="true" >
-                                                        <Image url="@../img/copy-icon.png" />
-                                                    </ImageView>
-                                                </graphic>
-                                            </Button>
-                                        </right>
-                                    </BorderPane>
-                                    <StackPane VBox.vgrow="SOMETIMES" id="lineupBottom" styleClass="transparent">
-                                        <ScrollPane fitToWidth="true" styleClass="transparent">
-                                            <VBox fx:id="lineupBottomContent" styleClass="transparent" />
-                                        </ScrollPane>
-                                    </StackPane>
-                                </VBox>
-                                <Rectangle fx:id="lineupBorder" arcWidth="10" arcHeight="10" fill="transparent" stroke="#444" mouseTransparent="true" managed="false" />
-                            </StackPane>
-                        </StackPane>
-                    </center>
-                </BorderPane>
+                <fx:include source="partial/ListDisplay.fxml" fx:id="hallLine" />
             </VBox>
         </Tab>
     </TabPane>
