@@ -10,6 +10,8 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.shape.Rectangle?>
 <?import dev.liambloom.nhs.inductionStage.gui.HyperText?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="dev.liambloom.nhs.inductionStage.gui.ResultController">
@@ -31,9 +33,34 @@
                 </ScrollPane>
             </VBox>
         </Tab>
-        <Tab text="Lineup" closable="false">
-            <VBox>
+        <Tab text="Hallway Lineup" closable="false">
+            <VBox styleClass="tabRoot">
+                <TextFlow styleClass="lineupHeader">
+                    <Text>
+                        The order members should line up in the hallway to walk onstage at the start of the ceremony:
+                    </Text>
+                </TextFlow>
                 <fx:include source="partial/ListDisplay.fxml" fx:id="hallLine" />
+            </VBox>
+        </Tab>
+        <Tab text="New Member Order" closable="false">
+            <VBox styleClass="tabRoot" >
+                <TextFlow styleClass="lineupHeader">
+                    <Text>
+                        The order in which new members are called up to receive their books and certificates:
+                    </Text>
+                </TextFlow>
+                <fx:include source="partial/ListDisplay.fxml" fx:id="newMemberLineup" />
+            </VBox>
+        </Tab>
+        <Tab text="Senior Order" closable="false">
+            <VBox styleClass="tabRoot" >
+                <TextFlow styleClass="lineupHeader">
+                    <Text>
+                        The order in which seniors are called up to receive their books and sashes:
+                    </Text>
+                </TextFlow>
+                <fx:include source="partial/ListDisplay.fxml" fx:id="seniorLineup" />
             </VBox>
         </Tab>
     </TabPane>

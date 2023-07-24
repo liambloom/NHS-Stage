@@ -72,6 +72,7 @@ public class Stage {
                     return builder.build();
                 })
                 .filter(Objects::nonNull)
+                .filter(m -> !m.isReturning())
                 .forEachOrdered(r::add);
 
         return r;
@@ -80,14 +81,17 @@ public class Stage {
     public List<Member> getSeniorCallupOrder() {
         List<Member> r = new ArrayList<>(memberCount);
 
-        r.addAll(Arrays.asList(incumbentOfficers).subList(0, incumbentOfficers.length - 1));
+        Stream.of(incumbentOfficers)
+                .limit(incumbentOfficers.length - 1)
+                .filter(m -> m.grade().equals(Grade.Senior))
+                .forEachOrdered(r::add);
 
-        Stream.Builder<Member[]> stageRightReverseBuilder = Stream.builder();
-        for (int i = stageRight.length - 1; i >= 0; i--) {
-            stageRightReverseBuilder.add(stageRight[i]);
+        Stream.Builder<Member[]> stageLeftReverseBuilder = Stream.builder();
+        for (int i = stageLeft.length - 1; i >= 0; i--) {
+            stageLeftReverseBuilder.add(stageLeft[i]);
         }
 
-        Stream.concat(Stream.of(stageLeft), stageRightReverseBuilder.build())
+        Stream.concat(Stream.of(stageRight), stageLeftReverseBuilder.build())
                 .flatMap(members -> {
                     Stream.Builder<Member> builder = Stream.builder();
                     for (int i = members.length - 1; i >= 0; i--) {
@@ -96,9 +100,13 @@ public class Stage {
                     return builder.build();
                 })
                 .filter(Objects::nonNull)
+                .filter(m -> m.grade().equals(Grade.Senior))
                 .forEachOrdered(r::add);
 
-        r.add(incumbentOfficers[incumbentOfficers.length - 1]);
+        Member lastOfficer = incumbentOfficers[incumbentOfficers.length - 1];
+        if (lastOfficer.grade().equals(Grade.Senior)) {
+            r.add(lastOfficer);
+        }
 
         return r;
     }

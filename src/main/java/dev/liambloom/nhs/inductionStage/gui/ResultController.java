@@ -38,11 +38,22 @@ public class ResultController extends StageManager.Managed {
     @FXML
     private ListDisplayController hallLineController;
 
+    @SuppressWarnings("unused")
+    @FXML
+    private ListDisplayController newMemberLineupController;
+
+    @SuppressWarnings("unused")
+    @FXML
+    private ListDisplayController seniorLineupController;
+
     public void initData(List<Member> members, List<String> vipTable, List<SeatingGroup> stageLeft, List<SeatingGroup> stageRight) {
         stage = new Stage(members.toArray(new Member[0]), 6, vipTable.toArray(new String[0]),
                 stageLeft.toArray(new SeatingGroup[0]), stageRight.toArray(new SeatingGroup[0]));
 
-        hallLineController.initData(stage);
+        hallLineController.initData(stage.getHallwayLineup());
+        newMemberLineupController.initData(stage.getNewMemberCallupOrder());
+        seniorLineupController.initData(stage.getSeniorCallupOrder());
+
 
         String[][] chartContent = stage.getLayout();
         for (int i = 0; i < chartContent.length; i++) {

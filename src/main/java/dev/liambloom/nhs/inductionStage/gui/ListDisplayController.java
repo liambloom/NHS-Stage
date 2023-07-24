@@ -16,10 +16,11 @@ import javafx.scene.shape.Rectangle;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ListDisplayController {
-    private Stage stage;
+    private List<Member> lineup;
 
     @FXML
     private ComboBox<String> lineupDropdown;
@@ -65,18 +66,18 @@ public class ListDisplayController {
                     lineupBottomContent.getChildren().add(text);
                 }
                 case SeparateLines -> {
-                    for (Member member : stage.getHallwayLineup()) {
+                    for (Member member : lineup) {
                         lineupBottomContent.getChildren().add(new Label(member.toString()));
                     }
                 }
                 case BulletedList -> {
-                    for (Member member : stage.getHallwayLineup()) {
+                    for (Member member : lineup) {
                         lineupBottomContent.getChildren().add(new Label("\u2022 " + member));
                     }
                 }
                 case NumberedList -> {
                     int i = 1;
-                    for (Member member : stage.getHallwayLineup()) {
+                    for (Member member : lineup) {
                         lineupBottomContent.getChildren().add(new Label(i++ + ".\t" + member));
                     }
                 }
@@ -85,8 +86,8 @@ public class ListDisplayController {
 
     }
 
-    public void initData(Stage stage) {
-        this.stage = stage;
+    public void initData(List<Member> lineup) {
+        this.lineup = lineup;
 
         lineupDropdown.setValue(lineupDropdown.getItems().get(0));
     }
@@ -104,14 +105,13 @@ public class ListDisplayController {
     }
 
     private String lineupFencepost(String post) {
-        return stringFencePost(stage.getHallwayLineup().iterator(), post);
+        return stringFencePost(lineup.iterator(), post);
     }
 
     @FXML
     public void copyLineup(ActionEvent event) {
         Clipboard clipboard = Clipboard.getSystemClipboard();
         ClipboardContent content = new ClipboardContent();
-        List<Member> lineup = stage.getHallwayLineup();
 
         switch (LineupFormatOptions.fromString(lineupDropdown.getValue())) {
             case CommaSeperated -> {

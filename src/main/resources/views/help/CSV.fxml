@@ -31,8 +31,8 @@
                     The member list should contain a list of members along with certain data about those members. Each
                     member should be in their own row. There should be columns for first name, last name, grade (one of:
                     "Sophomore", "Junior", "Senior", "10", "11", "12"), and whether they are a returning member (one of:
-                    "true", "t", "yes", "y") or a new member ("false", "f", "no", "n"). The order of these columns does
-                    not matter.
+                    "true", "t", "yes", "y") or a new member (one of: "false", "f", "no", "n"). The order of these
+                    columns does not matter, and there can be other columns, which this program will ignore.
                 </Text>
             </TextFlow>
             <TextFlow>
@@ -78,8 +78,8 @@
             <TextFlow>
                 <Text>
                     If you would like to upload your CSV as a sheet (tab) in an existing spreadsheet, open that
-                    spreadsheet. If you would like to upload it as a new spreadsheet, open any spreadsheet. Then, in the
-                    top menu, select  &#8203;
+                    spreadsheet. If you would like to upload it as a new spreadsheet, open any spreadsheet (which one
+                    doesn't matter, but you must have a Google Sheet open). Then, in the top menu, select  &#8203;
                 </Text>
                 <Text styleClass="code">File > Import</Text>
                 <Text>&#8203; and follow the on-screen prompts.</Text>

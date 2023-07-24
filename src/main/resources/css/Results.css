@@ -36,6 +36,9 @@
 #lineupBottom > ScrollPane {
     -fx-padding: 5px;
 }
+.lineupHeader {
+    -fx-font-weight: bold;
+}
 .transparent {
     -fx-background-color: transparent;
 }

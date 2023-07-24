@@ -13,7 +13,7 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="dev.liambloom.nhs.inductionStage.gui.ListDisplayController" fx:id="lineupBorderPane" maxHeight="Infinity" VBox.vgrow="ALWAYS">
     <center>
-        <StackPane id="lineupRoot" styleClass="tabRoot" maxHeight="Infinity">
+        <StackPane id="lineupRoot" maxHeight="Infinity">
             <StackPane>
                 <VBox id="lineupBox" fx:id="lineupBox">
                     <BorderPane id="lineupTop">
