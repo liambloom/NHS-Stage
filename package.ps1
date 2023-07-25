@@ -155,8 +155,9 @@ if ([System.Environment]::OSVersion.Platform -eq "Win32NT") {
 elseif ($IsMacOS) {
     $OS = "macos"
     $IconType = "icns"
+    $OSArgs = "--mac-package-name", "Stage for NHS"
     if ($Types -eq "all") {
-        $Types = "deb", "rpm"
+        $Types = "pkg", "dmg"
     }
 }
 elseif ($IsLinux) {
