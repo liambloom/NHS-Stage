@@ -208,7 +208,7 @@ if ($StartStage -le [Stage]::Image) {
     if ([System.Environment]::OSVersion.Platform -eq "Win32NT") {
         Compress-Archive -Path "$ImageLoc" -DestinationPath "$Dest/$name.zip"
     }
-    elseif ($IsLinux) {
+    else {
         tar -czf "$Dest/$($name.replace(' ', '-')).tar.gz" "$ImageLoc"
     }  
 
