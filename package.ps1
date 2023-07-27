@@ -159,6 +159,7 @@ elseif ($IsMacOS) {
     if ($Types -eq "all") {
         $Types = "pkg", "dmg"
     }
+    $ImageSuffix = ".app"
 }
 elseif ($IsLinux) {
     if ($Distro -eq 'Debian') {
@@ -185,7 +186,7 @@ else {
 $name='Stage Builder For NHS'
 $Version="$(mvn help:evaluate '-Dexpression=project.version' -q -DforceStdout)"
 $Dest="packaged/$Version/$OS"
-$ImageLoc="$Dest/$name"
+$ImageLoc="$Dest/$name$ImageSuffix"
 
 if ($StartStage -le [Stage]::Image) {
     Write-Verbose "Beginning image stage"
